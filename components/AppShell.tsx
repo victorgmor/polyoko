@@ -32,6 +32,13 @@ export default function AppShell() {
 
   return (
     <>
+      <div className="topbar">
+        <p>
+          In January 2026, a competing Polymarket bot, Polycule, was reportedly
+          drained for around $230,000 — it stored user private keys on a central
+          server. POLYNEX is built so that can&apos;t happen.
+        </p>
+      </div>
       <NodeMap pageId={pageId} onPageChange={go} />
       <DetailPanel pageId={pageId} />
     </>

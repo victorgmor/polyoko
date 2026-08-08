@@ -176,7 +176,7 @@ export default function NodeMap({
     }
 
     function bounds() {
-      return { minX: 24, maxX: mapW() - NODE - 24, minY: 48, maxY: H - NODE - 64 };
+      return { minX: 24, maxX: mapW() - NODE - 24, minY: 64, maxY: H - NODE - 64 };
     }
 
     function clampNode(n: MapNode) {

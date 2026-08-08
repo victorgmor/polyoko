@@ -37,13 +37,17 @@ main {
   box-sizing: border-box;
 }
 
+:root {
+  --ink: #0B0C10;
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
   overflow: hidden;
   background: rgb(245, 246, 242);
-  color: #111;
+  color: var(--ink);
   line-height: 1;
   -webkit-font-smoothing: antialiased;
 }
@@ -54,11 +58,11 @@ button {
   cursor: pointer;
   background: none;
   padding: 0;
-  color: #111;
+  color: var(--ink);
 }
 
 a {
-  color: #111;
+  color: var(--ink);
   text-decoration: none;
 }
 
@@ -69,6 +73,28 @@ a:hover {
 #app {
   width: 100%;
   height: 100%;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 8px 20px;
+  background: var(--ink);
+  border-bottom: 1px dashed rgb(245, 246, 242);
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.35em;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #fff;
+}
+
+.topbar p {
+  margin: 0;
+  width: 100%;
 }
 
 /* —— map —— */
@@ -106,7 +132,7 @@ a:hover {
 
 .link {
   fill: none;
-  stroke: #111;
+  stroke: var(--ink);
   /* stroke-width set in JS — CSS here would override the attr */
   vector-effect: non-scaling-stroke;
   shape-rendering: geometricPrecision; /* antialias — never crispEdges */
@@ -124,6 +150,10 @@ a:hover {
 .link.previously-visible,
 .node.previously-visible {
   opacity: 1;
+}
+
+.link.logo-link-soft {
+  stroke-dasharray: 4 4;
 }
 
 .link.logo-link-soft.newly-visible,
@@ -206,7 +236,7 @@ a:hover {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   text-align: center;
-  color: #111;
+  color: var(--ink);
 }
 
 .node-label {
@@ -284,16 +314,16 @@ a:hover {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Corner images — absolute layer only, does not change panel size */
+/* Corner images — absolute layer only, does not change panel size.
+   No transform/z-index on the wrapper so each item can stack above the panel alone. */
 .page-media {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 640px;
-  height: 520px;
-  transform: translate(-50%, -50%);
+  width: 780px;
+  height: 580px;
+  margin: -290px 0 0 -390px;
   pointer-events: none;
-  z-index: 0;
 }
 
 .media-item {
@@ -301,67 +331,85 @@ a:hover {
   border-radius: 5px;
   width: 200px;
   position: absolute;
+  z-index: 0;
   transform: scale(0.9);
   opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
   transition:
     transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 400ms cubic-bezier(0.16, 1, 0.3, 1),
     top 400ms cubic-bezier(0.16, 1, 0.3, 1),
     left 400ms cubic-bezier(0.16, 1, 0.3, 1),
     right 400ms cubic-bezier(0.16, 1, 0.3, 1),
-    bottom 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    bottom 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    z-index 0s linear 280ms;
 }
 
 .media-landscape {
-  width: 280px;
+  width: 240px;
+}
+
+/* only 1 + 4 large */
+.media-index-1.media-landscape,
+.media-index-4.media-landscape {
+  width: 380px;
 }
 
 .media-item.show-media-item {
   opacity: 1;
   transform: scale(1);
+  pointer-events: auto;
   transition:
     transform 800ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
     top 800ms cubic-bezier(0.16, 1, 0.3, 1),
     left 800ms cubic-bezier(0.16, 1, 0.3, 1),
     right 800ms cubic-bezier(0.16, 1, 0.3, 1),
-    bottom 800ms cubic-bezier(0.16, 1, 0.3, 1);
+    bottom 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    z-index 0s linear 280ms;
 }
 
+.media-item.show-media-item:hover {
+  z-index: 2; /* above .main-content (1); siblings stay under */
+  transition: z-index 0s;
+}
+
+
 .media-index-1 {
-  top: 18%;
-  left: 12%;
+  top: 22%;
+  left: 18%;
 }
 .media-index-1.show-media-item {
-  top: 6%;
-  left: 2%;
+  top: 0;
+  left: 8%;
 }
 
 .media-index-2 {
-  bottom: 18%;
-  right: 12%;
+  bottom: 22%;
+  right: 18%;
 }
 .media-index-2.show-media-item {
-  bottom: 6%;
-  right: 2%;
+  bottom: 0;
+  right: 8%;
 }
 
 .media-index-3 {
-  top: 20%;
-  right: 10%;
+  top: 24%;
+  right: 18%;
 }
 .media-index-3.show-media-item {
-  top: 10%;
-  right: 0;
+  top: 2%;
+  right: 6%;
 }
 
 .media-index-4 {
-  bottom: 20%;
-  left: 12%;
+  bottom: 24%;
+  left: 18%;
 }
 .media-index-4.show-media-item {
-  bottom: 10%;
-  left: 2%;
+  bottom: 2%;
+  left: 8%;
 }
 
 .media-item img {
@@ -389,7 +437,7 @@ a:hover {
   align-items: center;
   gap: 10px;
   padding: 0 0 10px;
-  border-bottom: 1px dashed #111;
+  border-bottom: 1px dashed var(--ink);
   user-select: none;
 }
 
@@ -427,7 +475,7 @@ a:hover {
   font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 10px;
   line-height: 1;
-  color: #111;
+  color: var(--ink);
 }
 
 .tab-title {
@@ -443,13 +491,33 @@ a:hover {
 }
 
 .tab-indicator::after {
-  content: "–";
+  content: "+";
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 14px;
   display: inline-block;
   position: relative;
   top: -2px;
+}
+
+.page-header-titles .tab-indicator::after {
+  content: "–";
+}
+
+.page-accordion-title:hover .tab-indicator::after {
+  content: "↓";
+  font-size: 12px;
+  top: 0;
+}
+
+.page-accordion.is-open > .page-accordion-title .tab-indicator::after {
+  content: "–";
+}
+
+.page-accordion.is-open > .page-accordion-title:hover .tab-indicator::after {
+  content: "↑";
+  font-size: 12px;
+  top: 0;
 }
 
 .tab-content {
@@ -481,11 +549,52 @@ a:hover {
   margin-top: 6px;
 }
 
-.page-section-title {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+.page-accordion {
+  width: 100%;
+}
+
+.page-accordion-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px dashed var(--ink);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+}
+
+.page-accordion.is-open > .page-accordion-title {
+  border-bottom: none;
+}
+
+.page-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-accordion.is-open > .page-accordion-panel {
+  grid-template-rows: 1fr;
+}
+
+.page-accordion-body {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border-top: 1px dashed transparent;
+}
+
+.page-accordion.is-open > .page-accordion-panel > .page-accordion-body {
+  padding: 10px 0 18px;
+  border-top-color: var(--ink);
 }
 
 .page-bullets {
@@ -517,8 +626,8 @@ a:hover {
   text-align: center;
   text-decoration: none;
   text-indent: 0;
-  border: 1px solid #111;
-  background: #111;
+  border: 1px solid var(--ink);
+  background: var(--ink);
   color: #fff;
   font-size: 11px;
   letter-spacing: 0.05em;
@@ -527,7 +636,7 @@ a:hover {
 
 .launch-btn:hover {
   background: #fff;
-  color: #111;
+  color: var(--ink);
   text-decoration: none;
 }
 

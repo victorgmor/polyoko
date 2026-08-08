@@ -5,6 +5,10 @@ import AppShell from "@/components/AppShell";
 export const metadata: Metadata = {
   title: "Polynex",
   description: "Polynex trading bot on Polymarket.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/favicon.svg" }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
