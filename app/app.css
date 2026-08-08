@@ -1,0 +1,536 @@
+@font-face {
+  font-family: "Brunswick Grotesque";
+  font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/BrunswickGrotesque-Regular.woff2") format("woff2");
+}
+
+/* Trousdale reset — keeps h2/etc from UA-bolding Brunswick Regular */
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+ol,
+ul,
+li,
+section,
+main {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: rgb(245, 246, 242);
+  color: #111;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  color: #111;
+}
+
+a {
+  color: #111;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+/* —— map —— */
+.map-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+.map-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.map-stage svg.map-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  shape-rendering: geometricPrecision;
+}
+
+.node {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  z-index: 2;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  opacity: 0;
+}
+
+.link {
+  fill: none;
+  stroke: #111;
+  /* stroke-width set in JS — CSS here would override the attr */
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision; /* antialias — never crispEdges */
+  stroke-linecap: butt;
+  opacity: 0;
+}
+
+.node.newly-visible {
+  opacity: 1;
+  transition: opacity 1000ms;
+}
+
+/* Links: no load fade (thickness). Focus mute uses short ease below. */
+.link.newly-visible,
+.link.previously-visible,
+.node.previously-visible {
+  opacity: 1;
+}
+
+.link.logo-link-soft.newly-visible,
+.link.logo-link-soft.previously-visible {
+  opacity: 0.18;
+}
+
+/* Mute wave easing — only after first reveal (see .focus-ready) */
+.focus-ready .link.newly-visible,
+.focus-ready .link.previously-visible {
+  transition: opacity 200ms ease, stroke 200ms ease;
+}
+
+.focus-ready .node.newly-visible .number,
+.focus-ready .node.newly-visible .node-label h2,
+.focus-ready .node.previously-visible .number,
+.focus-ready .node.previously-visible .node-label h2 {
+  transition: color 200ms ease;
+}
+
+/* Focus mute via grey art (not node opacity — that makes hex see-through) */
+.node.muted-node .number,
+.node.muted-node .node-label h2 {
+  color: #999;
+}
+.node.muted-node.node-type-path .node-inner {
+  background-image: url(/img/secondary-node-path.svg);
+}
+.link.muted-link.newly-visible,
+.link.muted-link.previously-visible {
+  stroke: #999;
+  opacity: 0.25;
+}
+.link.logo-link-soft.muted-link.newly-visible,
+.link.logo-link-soft.muted-link.previously-visible {
+  opacity: 0.08;
+}
+
+.node.is-hidden,
+.link.is-hidden {
+  display: none !important;
+}
+
+.node-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+}
+
+.node:hover .node-inner {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.node.home-node .node-inner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: url(/img/coloured-node-home.svg) no-repeat center center / contain;
+}
+
+.node.node-type-path .node-inner {
+  width: 24px;
+  height: 24px;
+  background: url(/img/node-path.svg) no-repeat center center;
+}
+
+.node .number {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 24px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #111;
+}
+
+.node-label {
+  display: block;
+  position: absolute;
+  width: 150px;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -3px);
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.node-label h2 {
+  display: inline;
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.45em;
+  letter-spacing: 0.1em;
+  background: rgb(245, 246, 242);
+  border-radius: 5px;
+  padding: 1px 3px;
+  text-transform: uppercase;
+}
+
+/* —— info panel —— */
+.page {
+  position: fixed;
+  top: 0;
+  left: 75vw;
+  bottom: 0;
+  width: 320px;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .page {
+    width: 95vw;
+    left: 50%;
+  }
+}
+
+.page-container {
+  width: 420px;
+  position: relative;
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.45em;
+  letter-spacing: -0.01em;
+  pointer-events: all;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    width: 100%;
+    font-size: 14px;
+  }
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  max-height: 70vh;
+  border-radius: 7px;
+  background: #fff;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Corner images — absolute layer only, does not change panel size */
+.page-media {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 640px;
+  height: 520px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.media-item {
+  overflow: hidden;
+  border-radius: 5px;
+  width: 200px;
+  position: absolute;
+  transform: scale(0.9);
+  opacity: 0;
+  transition:
+    transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    top 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    left 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    right 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    bottom 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.media-landscape {
+  width: 280px;
+}
+
+.media-item.show-media-item {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    top 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    left 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    right 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    bottom 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.media-index-1 {
+  top: 18%;
+  left: 12%;
+}
+.media-index-1.show-media-item {
+  top: 6%;
+  left: 2%;
+}
+
+.media-index-2 {
+  bottom: 18%;
+  right: 12%;
+}
+.media-index-2.show-media-item {
+  bottom: 6%;
+  right: 2%;
+}
+
+.media-index-3 {
+  top: 20%;
+  right: 10%;
+}
+.media-index-3.show-media-item {
+  top: 10%;
+  right: 0;
+}
+
+.media-index-4 {
+  bottom: 20%;
+  left: 12%;
+}
+.media-index-4.show-media-item {
+  bottom: 10%;
+  left: 2%;
+}
+
+.media-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .page-media,
+  .media-item {
+    display: none;
+  }
+}
+
+.main-content-inner {
+  padding: 14px 25px 18px;
+}
+
+.tab-titles {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 10px;
+  border-bottom: 1px dashed #111;
+  user-select: none;
+}
+
+.tab-icon {
+  flex-shrink: 0;
+}
+
+.icon-home {
+  width: 18px;
+  height: 18px;
+  background: url(/img/coloured-node-home.svg) center center no-repeat;
+  background-size: 18px 18px;
+}
+
+.tab-icon.icon-path {
+  position: relative;
+  width: 20px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-icon.icon-path img {
+  position: absolute;
+  inset: 0;
+  width: 20px;
+  height: 18px;
+  display: block;
+}
+
+.tab-number {
+  position: relative;
+  z-index: 1;
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  line-height: 1;
+  color: #111;
+}
+
+.tab-title {
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.45em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tab-indicator {
+  margin-left: auto;
+}
+
+.tab-indicator::after {
+  content: "–";
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 14px;
+  display: inline-block;
+  position: relative;
+  top: -2px;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+}
+
+.page-container p {
+  text-indent: 23px;
+  margin: 0;
+}
+
+.page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page-lead {
+  text-indent: 0 !important;
+  font-weight: 500;
+}
+
+.page-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.page-section-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.page-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: disc;
+}
+
+.page-bullets li {
+  display: list-item;
+  text-indent: 0;
+}
+
+.page-link {
+  text-indent: 0 !important;
+}
+
+.page-body-home p {
+  text-indent: 0;
+}
+
+.launch-btn {
+  display: block;
+  margin-top: 4px;
+  padding: 10px 12px;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.launch-btn:hover {
+  background: #fff;
+  color: #111;
+  text-decoration: none;
+}
+
+.index-link {
+  text-decoration: underline;
+}
