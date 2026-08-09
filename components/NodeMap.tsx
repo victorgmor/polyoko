@@ -176,11 +176,20 @@ export default function NodeMap({
       );
 
     function mapW() {
-      return W > 768 ? Math.min(W * 0.52, W - 420) : W * 0.9;
+      return W > 768 ? Math.min(W * 0.52, W - 420) : W - 8;
     }
 
     function bounds() {
-      return { minX: 24, maxX: mapW() - NODE - 24, minY: 64, maxY: H - NODE - 64 };
+      if (W > 768) {
+        return { minX: 24, maxX: mapW() - NODE - 24, minY: 64, maxY: H - NODE - 64 };
+      }
+      // mobile: keep the mark in the upper band; panel sits below
+      return {
+        minX: 12,
+        maxX: mapW() - NODE - 12,
+        minY: 72,
+        maxY: Math.max(72 + NODE, H * 0.46 - NODE),
+      };
     }
 
     function clampNode(n: MapNode) {
