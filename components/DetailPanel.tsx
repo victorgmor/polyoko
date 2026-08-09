@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+} from "react";
 import {
   getPage,
   HOME_MEDIA,
@@ -72,7 +78,11 @@ function Section({
         aria-expanded={open}
         onClick={onToggle}
       >
-        <span className="tab-title">{section.heading}</span>
+        <span
+          className={`tab-title${/^v?\d/.test(section.heading) ? " is-version" : ""}`}
+        >
+          {section.heading}
+        </span>
         <span className="tab-indicator" aria-hidden />
       </button>
       <div className="page-accordion-panel">
@@ -82,7 +92,15 @@ function Section({
   );
 }
 
-function PageBody({ page, isHome }: { page: PageContent; isHome: boolean }) {
+function PageBody({
+  page,
+  isHome,
+  onPageChange,
+}: {
+  page: PageContent;
+  isHome: boolean;
+  onPageChange: (id: string) => void;
+}) {
   const external = Boolean(page.href?.startsWith("http"));
   const sections = page.sections ?? [];
   const [open, setOpen] = useState<Record<number, boolean>>({});
@@ -90,6 +108,13 @@ function PageBody({ page, isHome }: { page: PageContent; isHome: boolean }) {
   useEffect(() => {
     setOpen({});
   }, [page.uri]);
+
+  function goHref(href: string, e?: MouseEvent) {
+    if (href.startsWith("http") || href === "#") return;
+    e?.preventDefault();
+    const id = href === "/" ? "/" : href.replace(/^\//, "");
+    onPageChange(id);
+  }
 
   return (
     <div className={`page-body${isHome ? " page-body-home" : ""}`}>
@@ -103,23 +128,59 @@ function PageBody({ page, isHome }: { page: PageContent; isHome: boolean }) {
           onToggle={() => setOpen((o) => ({ ...o, [i]: !o[i] }))}
         />
       ))}
-      {page.href &&
-        (isHome ? (
-          <a href={page.href} className="launch-btn">
-            {page.hrefLabel ?? "Launch bot"}
-          </a>
-        ) : (
+      {isHome && page.ctas && page.ctas.length > 0 ? (
+        <div className="launch-btns">
+          {page.ctas.map((c) => (
+            <a
+              key={c.label}
+              href={c.href}
+              className={`launch-btn${c.ghost ? " is-ghost" : ""}`}
+              target={c.href.startsWith("http") ? "_blank" : undefined}
+              rel={c.href.startsWith("http") ? "noreferrer" : undefined}
+              onClick={(e) => goHref(c.href, e)}
+            >
+              {c.icon === "telegram" && (
+                <svg
+                  className="launch-btn-icon"
+                  viewBox="16 64 106 90"
+                  aria-hidden
+                >
+                  <path
+                    fill="currentColor"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M76.33 132.14L62.5 143.73L58.59 144.26L49.84 114.11L19.06 104L113.82 67.8799L118.29 67.9799L103.36 149.19L76.33 132.14ZM100.03 83.1399L56.61 109.17L61.61 130.5L62.98 130.19L68.2 113.73L102.9 83.4799L100.03 83.1399Z"
+                  />
+                </svg>
+              )}
+              {c.icon === "file" && (
+                <svg
+                  className="launch-btn-icon"
+                  viewBox="3.5 2.5 9 11"
+                  aria-hidden
+                >
+                  <path fill="currentColor" d="M4,3V13h8V7H8V3ZM9,3V6h3Z" />
+                </svg>
+              )}
+              {c.label}
+            </a>
+          ))}
+        </div>
+      ) : (
+        page.href && (
           <p className="page-link">
             <a
               href={page.href}
               target={external ? "_blank" : undefined}
               rel={external ? "noreferrer" : undefined}
               className="index-link"
+              onClick={(e) => goHref(page.href!, e)}
             >
               {page.hrefLabel ?? page.href}
             </a>
           </p>
-        ))}
+        )
+      )}
     </div>
   );
 }
@@ -146,7 +207,13 @@ function HomeMedia({ show }: { show: boolean }) {
   );
 }
 
-export default function DetailPanel({ pageId }: { pageId: string }) {
+export default function DetailPanel({
+  pageId,
+  onPageChange,
+}: {
+  pageId: string;
+  onPageChange: (id: string) => void;
+}) {
   const page = getPage(pageId) ?? getPage("/")!;
   const isHome = pageId === "/";
   const [mediaIn, setMediaIn] = useState(false);
@@ -206,20 +273,8 @@ export default function DetailPanel({ pageId }: { pageId: string }) {
     <div className={`page${isHome ? " page-home" : ""}`}>
       <div className="page-container">
         {isHome && <HomeMedia show={mediaIn} />}
-        <div
-          ref={shellRef}
-          className={`main-content${sizing ? " is-sizing" : ""}`}
-          style={panelH != null ? { height: panelH } : undefined}
-          onTransitionEnd={(e) => {
-            if (e.propertyName !== "height") return;
-            const h = shellRef.current?.offsetHeight ?? 0;
-            prevH.current = h;
-            sizingRef.current = false;
-            setPanelH(h);
-            setSizing(false);
-          }}
-        >
-          <div className="main-content-inner" ref={innerRef}>
+        <div className="page-stack">
+          <div className="panel-heading">
             <div className="tab-titles page-header-titles">
               {isHome ? (
                 <span className="tab-icon icon-home" />
@@ -232,10 +287,37 @@ export default function DetailPanel({ pageId }: { pageId: string }) {
               <span className="tab-title">
                 {isHome ? "POLYNEX" : page.title.toUpperCase()}
               </span>
-              <span className="tab-indicator" />
+              {!isHome && (
+                <button
+                  type="button"
+                  className="panel-back"
+                  aria-label="Back to home"
+                  onClick={() => onPageChange("/")}
+                />
+              )}
             </div>
-            <div className="tab-content">
-              <PageBody page={page} isHome={isHome} />
+          </div>
+          <div
+            ref={shellRef}
+            className={`main-content${sizing ? " is-sizing" : ""}`}
+            style={panelH != null ? { height: panelH } : undefined}
+            onTransitionEnd={(e) => {
+              if (e.propertyName !== "height") return;
+              const h = shellRef.current?.offsetHeight ?? 0;
+              prevH.current = h;
+              sizingRef.current = false;
+              setPanelH(h);
+              setSizing(false);
+            }}
+          >
+            <div className="main-content-inner" ref={innerRef}>
+              <div className="tab-content">
+                <PageBody
+                  page={page}
+                  isHome={isHome}
+                  onPageChange={onPageChange}
+                />
+              </div>
             </div>
           </div>
         </div>

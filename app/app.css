@@ -270,7 +270,7 @@ a:hover {
   font-size: 11px;
   line-height: 1.45em;
   letter-spacing: 0.05em;
-  text-transform: uppercase;
+  text-transform: none;
   color: #888;
   background: rgb(245, 246, 242);
   border-radius: 3px;
@@ -319,9 +319,27 @@ a:hover {
   }
 }
 
-.main-content {
+.page-stack {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.panel-heading {
+  background: #fff;
+  border-radius: 7px;
+  padding: 12px 25px;
+}
+
+.panel-heading .tab-titles {
+  padding: 0;
+  border-bottom: none;
+}
+
+.main-content {
+  position: relative;
   overflow: hidden;
   max-height: 70vh;
   border-radius: 7px;
@@ -440,7 +458,11 @@ a:hover {
 }
 
 .main-content-inner {
-  padding: 14px 25px 18px;
+  padding: 16px 25px 18px;
+}
+
+.main-content .tab-content {
+  padding-top: 0;
 }
 
 .tab-titles {
@@ -498,8 +520,40 @@ a:hover {
   text-transform: uppercase;
 }
 
+.tab-title.is-version {
+  text-transform: none;
+  letter-spacing: 0.05em;
+}
+
 .tab-indicator {
   margin-left: auto;
+}
+
+.panel-back {
+  margin-left: auto;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  position: relative;
+}
+
+.panel-back::after {
+  content: "←";
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  display: block;
+  text-align: center;
+}
+
+.panel-back:hover {
+  opacity: 0.55;
 }
 
 .tab-indicator::after {
@@ -510,10 +564,6 @@ a:hover {
   display: inline-block;
   position: relative;
   top: -2px;
-}
-
-.page-header-titles .tab-indicator::after {
-  content: "–";
 }
 
 .page-accordion-title:hover .tab-indicator::after {
@@ -539,7 +589,6 @@ a:hover {
 }
 
 .page-container p {
-  text-indent: 23px;
   margin: 0;
 }
 
@@ -550,7 +599,6 @@ a:hover {
 }
 
 .page-lead {
-  text-indent: 0 !important;
   font-weight: 500;
 }
 
@@ -616,7 +664,6 @@ a:hover {
   color: var(--ink);
   font-size: 12px;
   line-height: 1.35em;
-  text-indent: 0;
 }
 
 .fee-compare th,
@@ -660,25 +707,25 @@ a:hover {
 
 .page-bullets li {
   display: list-item;
-  text-indent: 0;
 }
 
-.page-link {
-  text-indent: 0 !important;
-}
-
-.page-body-home p {
-  text-indent: 0;
+.launch-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .launch-btn {
-  display: block;
-  margin-top: 4px;
+  flex: 1.45 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 10px 12px;
   text-align: center;
   text-decoration: none;
-  text-indent: 0;
   border: 1px solid var(--ink);
+  border-radius: 999px;
   background: var(--ink);
   color: #fff;
   font-size: 11px;
@@ -686,10 +733,29 @@ a:hover {
   text-transform: uppercase;
 }
 
+.launch-btn-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: block;
+}
+
 .launch-btn:hover {
   background: #fff;
   color: var(--ink);
   text-decoration: none;
+}
+
+.launch-btn.is-ghost {
+  flex: 1 1 0;
+  background: transparent;
+  color: var(--ink);
+  border-style: dashed;
+}
+
+.launch-btn.is-ghost:hover {
+  background: var(--ink);
+  color: #fff;
 }
 
 .index-link {

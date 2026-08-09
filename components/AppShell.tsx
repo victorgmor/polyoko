@@ -34,12 +34,12 @@ export default function AppShell() {
     <>
       <div className="topbar">
         <p>
-          In January 2026, a competing Polymarket bot, Polycule, was reportedly
-          drained for around $230,000.</p>
-          <p>POLYNEX is built so that can&apos;t happen.</p>
+          Only open Polynex from this
+          site. Never paste a private key into chat.
+        </p>
       </div>
       <NodeMap pageId={pageId} onPageChange={go} />
-      <DetailPanel pageId={pageId} />
+      <DetailPanel pageId={pageId} onPageChange={go} />
     </>
   );
 }

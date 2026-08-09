@@ -169,7 +169,7 @@ export default function NodeMap({
             d.n != null ? `<span class="number">${d.n}</span>` : ""
           }</div>` +
           `<span class="node-label"><span><h2>${d.title}</h2>${
-            d.id === "/" ? "<br /><h3>ALPHA</h3>" : ""
+            d.id === "/" ? "<br /><h3>v0.2.1</h3>" : ""
           }</span></span>`
       );
 
