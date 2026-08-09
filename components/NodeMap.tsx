@@ -13,7 +13,6 @@ type MapNode = {
   x: number;
   y: number;
   title: string;
-  n?: number;
   fx?: number | null;
   fy?: number | null;
   vx?: number;
@@ -27,9 +26,9 @@ type MapLink = {
   offset: number;
 };
 
-function nodeClass(id: string): string {
+function nodeClass(id: string, shape?: string): string {
   if (id === "/") return "node home-node";
-  return "node node-type-path";
+  return `node node-shape node-shape-${shape ?? "pentagon"}`;
 }
 
 const HUB = { x: 320, y: 360 };
@@ -46,11 +45,10 @@ const INITIAL_NODES: MapNode[] = [
     const a = (i / MENU_NODES.length) * Math.PI * 2 - Math.PI / 2;
     return {
       id: n.id,
-      cls: nodeClass(n.id),
+      cls: nodeClass(n.id, n.shape),
       x: HUB.x + Math.cos(a) * 160,
       y: HUB.y + Math.sin(a) * 140,
       title: n.title,
-      n: n.n,
     };
   }),
 ];
@@ -77,7 +75,8 @@ function px(n: number) {
   return Math.round(n) + 0.5;
 }
 
-const EDGE = 13; // stop at hex rim so strokes don't run under the glyph
+const EDGE = 11; // satellite ends
+const EDGE_HUB = 13; // hub end
 
 function straight(a: MapNode, b: MapNode, offset = 0) {
   let x1 = a.x + half;
@@ -95,12 +94,13 @@ function straight(a: MapNode, b: MapNode, offset = 0) {
     x2 += -uy * offset;
     y2 += ux * offset;
   }
-  // inset from centers → node faces stay opaque over the map
-  if (len > EDGE * 2) {
-    x1 += ux * EDGE;
-    y1 += uy * EDGE;
-    x2 -= ux * EDGE;
-    y2 -= uy * EDGE;
+  const e1 = a.id === "/" ? EDGE_HUB : EDGE;
+  const e2 = b.id === "/" ? EDGE_HUB : EDGE;
+  if (len > e1 + e2) {
+    x1 += ux * e1;
+    y1 += uy * e1;
+    x2 -= ux * e2;
+    y2 -= uy * e2;
   }
   return `M${px(x1)},${px(y1)} L${px(x2)},${px(y2)}`;
 }
@@ -166,7 +166,9 @@ export default function NodeMap({
       .html(
         (d) =>
           `<div class="node-inner">${
-            d.n != null ? `<span class="number">${d.n}</span>` : ""
+            d.id === "/"
+              ? `<img src="/img/coloured-node-home.svg" alt="" width="18" height="18" draggable="false" />`
+              : ""
           }</div>` +
           `<span class="node-label"><span><h2>${d.title}</h2>${
             d.id === "/" ? "<br /><h3>v0.2.1</h3>" : ""
@@ -282,16 +284,16 @@ export default function NodeMap({
       el._muteT = setTimeout(() => el.classList.toggle(cls, on), delay);
     }
 
-    /** Focus preview: page, or hover (home→satellite, satellite→hub clears mute). */
+    /** Focus: current page, or hover preview (any satellite = home-style line; hub clears). */
     function syncFocus() {
       const cur = pageRef.current;
       let focus: string | null;
       if (hoverId === "/") {
         focus = null; // hover hub = as if main is open
-      } else if (cur === "/") {
-        focus = hoverId && hoverId !== "/" ? hoverId : null;
+      } else if (hoverId) {
+        focus = hoverId; // preview that node (same as home hover)
       } else {
-        focus = cur;
+        focus = cur === "/" ? null : cur;
       }
       const focusing = focus != null;
       const keep = (id: string) => id === focus || id === "/";

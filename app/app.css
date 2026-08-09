@@ -168,20 +168,19 @@ a:hover {
   transition: opacity 200ms ease, stroke 200ms ease;
 }
 
-.focus-ready .node.newly-visible .number,
 .focus-ready .node.newly-visible .node-label h2,
-.focus-ready .node.previously-visible .number,
-.focus-ready .node.previously-visible .node-label h2 {
-  transition: color 200ms ease;
+.focus-ready .node.previously-visible .node-label h2,
+.focus-ready .node.newly-visible.node-shape .node-inner,
+.focus-ready .node.previously-visible.node-shape .node-inner {
+  transition: color 200ms ease, background-color 200ms ease;
 }
 
-/* Focus mute via grey art (not node opacity — that makes hex see-through) */
-.node.muted-node .number,
+/* Focus mute via grey art (not node opacity — that makes shapes see-through) */
 .node.muted-node .node-label h2 {
   color: #999;
 }
-.node.muted-node.node-type-path .node-inner {
-  background-image: url(/img/secondary-node-path.svg);
+.node.muted-node.node-shape .node-inner {
+  background: #999;
 }
 .link.muted-link.newly-visible,
 .link.muted-link.previously-visible {
@@ -212,32 +211,49 @@ a:hover {
 }
 
 .node.home-node .node-inner {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: url(/img/coloured-node-home.svg) no-repeat center center / contain;
+  width: 18px;
+  height: 18px;
+  background: none;
 }
 
-.node.node-type-path .node-inner {
-  width: 24px;
-  height: 24px;
-  background: url(/img/node-path.svg) no-repeat center center;
-}
-
-.node .number {
+.node.home-node .node-inner img {
   display: block;
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 11px;
-  line-height: 24px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--ink);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  /* keep vector AA when scaled / hovered */
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.node.node-shape .node-inner {
+  background: var(--ink);
+  background-image: none;
+}
+
+.node.node-shape-triangle .node-inner {
+  width: 16px;
+  height: 14px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.node.node-shape-square .node-inner {
+  width: 13px;
+  height: 13px;
+}
+
+.node.node-shape-circle .node-inner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.node.node-shape-pentagon .node-inner {
+  width: 15px;
+  height: 15px;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 
 .node-label {
@@ -480,36 +496,43 @@ a:hover {
 }
 
 .icon-home {
-  width: 18px;
-  height: 18px;
-  background: url(/img/coloured-node-home.svg) center center no-repeat;
-  background-size: 18px 18px;
-}
-
-.tab-icon.icon-path {
-  position: relative;
-  width: 20px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tab-icon.icon-path img {
-  position: absolute;
-  inset: 0;
-  width: 20px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   display: block;
+  object-fit: contain;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  flex-shrink: 0;
 }
 
-.tab-number {
-  position: relative;
-  z-index: 1;
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 10px;
-  line-height: 1;
-  color: var(--ink);
+.tab-shape {
+  display: block;
+  background: var(--ink);
+  flex-shrink: 0;
+}
+
+.tab-shape-triangle {
+  width: 12px;
+  height: 11px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.tab-shape-square {
+  width: 11px;
+  height: 11px;
+}
+
+.tab-shape-circle {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.tab-shape-pentagon {
+  width: 12px;
+  height: 12px;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 
 .tab-title {
@@ -550,6 +573,7 @@ a:hover {
   line-height: 18px;
   display: block;
   text-align: center;
+  font-weight: 300;
 }
 
 .panel-back:hover {
@@ -731,6 +755,7 @@ a:hover {
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .launch-btn-icon {
@@ -756,6 +781,7 @@ a:hover {
 .launch-btn.is-ghost:hover {
   background: var(--ink);
   color: #fff;
+  border-style: solid;
 }
 
 .index-link {

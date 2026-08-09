@@ -15,7 +15,7 @@ import {
   type PageContent,
 } from "@/lib/menu";
 
-const MENU_N = Object.fromEntries(MENU_NODES.map((n) => [n.id, n.n]));
+const MENU_SHAPE = Object.fromEntries(MENU_NODES.map((n) => [n.id, n.shape]));
 
 function Paras({ text }: { text: string }) {
   return text
@@ -277,12 +277,19 @@ export default function DetailPanel({
           <div className="panel-heading">
             <div className="tab-titles page-header-titles">
               {isHome ? (
-                <span className="tab-icon icon-home" />
+                <img
+                  className="tab-icon icon-home"
+                  src="/img/coloured-node-home.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                  draggable={false}
+                />
               ) : (
-                <span className="tab-icon icon-path" aria-hidden>
-                  <img src="/img/node-path.svg" alt="" width={20} height={18} />
-                  <span className="tab-number">{MENU_N[pageId]}</span>
-                </span>
+                <span
+                  className={`tab-icon tab-shape tab-shape-${MENU_SHAPE[pageId]}`}
+                  aria-hidden
+                />
               )}
               <span className="tab-title">
                 {isHome ? "POLYNEX" : page.title.toUpperCase()}

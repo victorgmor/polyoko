@@ -7,10 +7,12 @@ export type MenuSection = {
   compare?: { head: [string, string, string]; rows: [string, string, string][] };
 };
 
+export type NodeShape = "triangle" | "square" | "circle" | "pentagon";
+
 export type MenuNode = {
   id: string;
   title: string;
-  n: number;
+  shape: NodeShape;
   summary?: string;
   body: string;
   sections?: MenuSection[];
@@ -38,7 +40,7 @@ export const MENU_NODES: MenuNode[] = [
   {
     id: "changelog",
     title: "Changelog",
-    n: 1,
+    shape: "triangle",
     summary: "What's new",
     body: "Release notes and product updates for Polynex.",
     sections: [
@@ -64,7 +66,7 @@ export const MENU_NODES: MenuNode[] = [
   {
     id: "docs",
     title: "Docs",
-    n: 2,
+    shape: "square",
     summary: "How Polynex works",
     body: "Your Polymarket trading bot — built to execute, track, and manage positions with less friction.",
     sections: [
@@ -122,7 +124,7 @@ export const MENU_NODES: MenuNode[] = [
   {
     id: "community",
     title: "Community",
-    n: 3,
+    shape: "circle",
     summary: "Telegram",
     body: "Join the Polynex community on Telegram.",
     href: "https://t.me/",
@@ -131,7 +133,7 @@ export const MENU_NODES: MenuNode[] = [
   {
     id: "x",
     title: "X",
-    n: 4,
+    shape: "pentagon",
     summary: "Updates",
     body: "Follow Polynex for announcements and updates.",
     href: "https://x.com/",
