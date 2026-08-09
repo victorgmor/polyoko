@@ -1,5 +1,11 @@
 /** Map navigation nodes (besides Polynex hub). Each has its own info page. */
-export type MenuSection = { heading?: string; body?: string; items?: string[] };
+export type MenuSection = {
+  heading?: string;
+  body?: string;
+  items?: string[];
+  /** 3-col comparison: [label, ours, theirs] */
+  compare?: { head: [string, string, string]; rows: [string, string, string][] };
+};
 
 export type MenuNode = {
   id: string;
@@ -24,11 +30,30 @@ export type PageContent = {
 
 export const MENU_NODES: MenuNode[] = [
   {
-    id: "bot",
-    title: "Bot",
+    id: "changelog",
+    title: "Changelog",
     n: 1,
-    summary: "Trading bot",
-    body: "Polynex bot runs automated strategies on Polymarket markets.",
+    summary: "What's new",
+    body: "Release notes and product updates for Polynex.",
+    sections: [
+      {
+        heading: "ALPHA",
+        body: "August 2026 — initial public site.",
+        items: [
+          "Map navigation with hub and satellite pages.",
+          "Docs — overview, fees, community, and terms.",
+          "Changelog, Telegram, and X nodes.",
+        ],
+      },
+      {
+        heading: "Coming next",
+        body: "Planned work — not shipped yet.",
+        items: [
+          "Live bot link from the home panel.",
+          "Telegram and X destinations.",
+        ],
+      },
+    ],
   },
   {
     id: "docs",
@@ -55,6 +80,21 @@ export const MENU_NODES: MenuNode[] = [
           "Alerts — get notified on fills, big moves, and markets you care about.",
           "Bot workflows — run repeatable strategies around entries, size, and exits without babysitting every tick.",
         ],
+      },
+      {
+        heading: "Fees",
+        body: "Transparent pricing versus trading through the Polymarket interface.",
+        compare: {
+          head: ["Cost", "Polynex", "Polymarket Interface"],
+          rows: [
+            ["Fee per trade", "0.5%", "2%"],
+            ["Gas fees", "$0 (covered)", "Variable"],
+            ["Deposit fee", "$0", "$0"],
+            ["Withdrawal fee", "$0", "$0"],
+            ["Monthly subscription", "None", "None"],
+            ["Bot / automation", "Included", "Not available"],
+          ],
+        },
       },
       {
         heading: "Community",
@@ -108,8 +148,8 @@ export const PAGES: Record<string, PageContent> = {
     summary: "",
     description:
       "Polynex is a trading bot for Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
-    href: "/bot",
-    hrefLabel: "Launch bot",
+    href: "/changelog",
+    hrefLabel: "Changelog",
   },
   ...Object.fromEntries(
     MENU_NODES.map((n) => [
@@ -135,7 +175,7 @@ export function getPage(id: string | null): PageContent | null {
 /** Polymarket-logo seats (x,y in 0..1). MR = Polynex tip. */
 export const LOGO_SEAT: Record<string, { x: number; y: number }> = {
   "/": { x: 0.78, y: 0.5 },
-  bot: { x: 0.22, y: 0.28 },
+  changelog: { x: 0.22, y: 0.28 },
   docs: { x: 0.78, y: 0.08 },
   telegram: { x: 0.22, y: 0.72 },
   x: { x: 0.78, y: 0.92 },
@@ -143,18 +183,18 @@ export const LOGO_SEAT: Record<string, { x: number; y: number }> = {
 
 /** Polymarket mark edges. */
 export const LOGO_EDGES: [string, string][] = [
-  ["bot", "docs"],
+  ["changelog", "docs"],
   ["docs", "/"],
   ["/", "x"],
   ["x", "telegram"],
-  ["telegram", "bot"],
-  ["bot", "/"],
+  ["telegram", "changelog"],
+  ["changelog", "/"],
   ["telegram", "/"],
 ];
 
 /** Extra chords — low opacity diagonals (not logo edges). */
 export const SOFT_EDGES: { a: string; b: string; offset: number }[] = [
-  { a: "bot", b: "x", offset: 0 },
+  { a: "changelog", b: "x", offset: 0 },
   { a: "docs", b: "telegram", offset: 0 },
 ];
 

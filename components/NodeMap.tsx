@@ -168,7 +168,9 @@ export default function NodeMap({
           `<div class="node-inner">${
             d.n != null ? `<span class="number">${d.n}</span>` : ""
           }</div>` +
-          `<span class="node-label"><span><h2>${d.title}</h2></span></span>`
+          `<span class="node-label"><span><h2>${d.title}</h2>${
+            d.id === "/" ? "<br /><h3>ALPHA</h3>" : ""
+          }</span></span>`
       );
 
     function mapW() {
@@ -440,9 +442,7 @@ export default function NodeMap({
             dragCount = Math.max(0, dragCount - 1);
             if (dragCount === 0) simulation.alphaTarget(0).stop();
             paint();
-          } else if (d.id === pageRef.current || d.id === "/") {
-            selectPage("/");
-          } else {
+          } else if (d.id !== pageRef.current) {
             selectPage(d.id);
           }
           d.fx = null;
