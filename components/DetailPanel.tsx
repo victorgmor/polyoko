@@ -118,7 +118,6 @@ function PageBody({
 
   return (
     <div className={`page-body${isHome ? " page-body-home" : ""}`}>
-      {page.summary && !isHome && <p className="page-lead">{page.summary}</p>}
       <Paras text={page.description} />
       {sections.map((s, i) => (
         <Section
@@ -167,17 +166,21 @@ function PageBody({
           ))}
         </div>
       ) : (
-        page.href && (
+        (page.href || page.hrefLabel) && (
           <p className="page-link">
-            <a
-              href={page.href}
-              target={external ? "_blank" : undefined}
-              rel={external ? "noreferrer" : undefined}
-              className="index-link"
-              onClick={(e) => goHref(page.href!, e)}
-            >
-              {page.hrefLabel ?? page.href}
-            </a>
+            {page.href ? (
+              <a
+                href={page.href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noreferrer" : undefined}
+                className="index-link"
+                onClick={(e) => goHref(page.href!, e)}
+              >
+                {page.hrefLabel ?? page.href}
+              </a>
+            ) : (
+              <span>{page.hrefLabel}</span>
+            )}
           </p>
         )
       )}

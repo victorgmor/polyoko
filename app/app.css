@@ -250,10 +250,10 @@ a:hover {
   border-radius: 50%;
 }
 
-.node.node-shape-pentagon .node-inner {
+.node.node-shape-hex .node-inner {
   width: 15px;
   height: 15px;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
 }
 
 .node-label {
@@ -321,11 +321,11 @@ a:hover {
 
   .page-stack {
     width: 100%;
-    max-height: 48vh;
+    max-height: 42vh;
   }
 
   .main-content {
-    max-height: calc(48vh - 52px);
+    max-height: calc(42vh - 52px);
   }
 }
 
@@ -540,10 +540,10 @@ a:hover {
   border-radius: 50%;
 }
 
-.tab-shape-pentagon {
+.tab-shape-hex {
   width: 12px;
   height: 12px;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
 }
 
 .tab-title {

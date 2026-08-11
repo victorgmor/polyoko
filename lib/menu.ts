@@ -7,13 +7,12 @@ export type MenuSection = {
   compare?: { head: [string, string, string]; rows: [string, string, string][] };
 };
 
-export type NodeShape = "triangle" | "square" | "circle" | "pentagon";
+export type NodeShape = "triangle" | "square" | "circle" | "hex";
 
 export type MenuNode = {
   id: string;
   title: string;
   shape: NodeShape;
-  summary?: string;
   body: string;
   sections?: MenuSection[];
   href?: string;
@@ -23,7 +22,6 @@ export type MenuNode = {
 export type PageContent = {
   title: string;
   uri: string;
-  summary: string;
   description: string;
   sections?: MenuSection[];
   href?: string;
@@ -41,7 +39,6 @@ export const MENU_NODES: MenuNode[] = [
     id: "changelog",
     title: "Changelog",
     shape: "triangle",
-    summary: "What's new",
     body: "Release notes and product updates for Polynex.",
     sections: [
       {
@@ -53,21 +50,12 @@ export const MENU_NODES: MenuNode[] = [
           "Changelog, Telegram, and X nodes.",
         ],
       },
-      {
-        heading: "Coming next",
-        body: "Planned work — not shipped yet.",
-        items: [
-          "Live bot link from the home panel.",
-          "Telegram and X destinations.",
-        ],
-      },
     ],
   },
   {
     id: "docs",
     title: "Docs",
     shape: "square",
-    summary: "How Polynex works",
     body: "Your Polymarket trading bot — built to execute, track, and manage positions with less friction.",
     sections: [
       {
@@ -125,16 +113,13 @@ export const MENU_NODES: MenuNode[] = [
     id: "community",
     title: "Community",
     shape: "circle",
-    summary: "Telegram",
     body: "Join the Polynex community on Telegram.",
-    href: "https://t.me/",
-    hrefLabel: "Open Telegram",
+    hrefLabel: "Coming Soon",
   },
   {
     id: "x",
     title: "X",
-    shape: "pentagon",
-    summary: "Updates",
+    shape: "hex",
     body: "Follow Polynex for announcements and updates.",
     href: "https://x.com/",
     hrefLabel: "Open X",
@@ -153,7 +138,6 @@ export const PAGES: Record<string, PageContent> = {
   "/": {
     title: "Polynex",
     uri: "/",
-    summary: "",
     description:
       "Polynex is a trading bot for Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
     // ponytail: bot URL placeholder until live
@@ -168,7 +152,6 @@ export const PAGES: Record<string, PageContent> = {
       {
         title: n.title,
         uri: n.id,
-        summary: n.summary ?? "",
         description: n.body,
         sections: n.sections,
         href: n.href,

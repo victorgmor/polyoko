@@ -28,7 +28,7 @@ type MapLink = {
 
 function nodeClass(id: string, shape?: string): string {
   if (id === "/") return "node home-node";
-  return `node node-shape node-shape-${shape ?? "pentagon"}`;
+  return `node node-shape node-shape-${shape ?? "hex"}`;
 }
 
 const HUB = { x: 320, y: 360 };
@@ -76,7 +76,7 @@ function px(n: number) {
 }
 
 const EDGE = 11; // satellite ends
-const EDGE_HUB = 13; // hub end
+const EDGE_HUB = 14; // hub end
 
 function straight(a: MapNode, b: MapNode, offset = 0) {
   let x1 = a.x + half;
@@ -183,12 +183,12 @@ export default function NodeMap({
       if (W > 768) {
         return { minX: 24, maxX: mapW() - NODE - 24, minY: 64, maxY: H - NODE - 64 };
       }
-      // mobile: keep the mark in the upper band; panel sits below
+      // mobile: leave ~panel + label clearance; fill the rest
       return {
-        minX: 12,
+        minX: 28,
         maxX: mapW() - NODE - 12,
-        minY: 72,
-        maxY: Math.max(72 + NODE, H * 0.46 - NODE),
+        minY: 56,
+        maxY: Math.max(56 + NODE * 2, H - 230 - NODE),
       };
     }
 
@@ -242,15 +242,21 @@ export default function NodeMap({
       const b = bounds();
       const w = b.maxX - b.minX;
       const h = b.maxY - b.minY;
-      const boxW = Math.min(w * 0.9, h * 0.98);
-      const boxH = Math.min(h * 0.82, boxW * 0.95);
+      const mobile = W <= 768;
+      // mobile: fill the upper band; seats sit inward (0.22–0.78) so stretch them out
+      const boxW = mobile ? w * 0.98 : Math.min(w * 0.9, h * 0.98);
+      const boxH = mobile ? h * 0.96 : Math.min(h * 0.82, boxW * 0.95);
       const ox = b.minX + (w - boxW) / 2;
       const oy = b.minY + (h - boxH) / 2;
+      const sx = mobile ? 1.22 : 1;
+      const sy = mobile ? 1.1 : 1;
       for (const n of active) {
         const seat = LOGO_SEAT[n.id];
         if (!seat) continue;
-        n.x = ox + seat.x * boxW - half;
-        n.y = oy + seat.y * boxH - half;
+        const x = 0.5 + (seat.x - 0.5) * sx;
+        const y = 0.5 + (seat.y - 0.5) * sy;
+        n.x = ox + x * boxW - half;
+        n.y = oy + y * boxH - half;
         n.vx = 0;
         n.vy = 0;
       }
