@@ -14,6 +14,7 @@ import {
   type MenuSection,
   type PageContent,
 } from "@/lib/menu";
+import { hubSvg, shapeSvg } from "@/lib/shapes";
 
 const MENU_SHAPE = Object.fromEntries(MENU_NODES.map((n) => [n.id, n.shape]));
 
@@ -280,24 +281,26 @@ export default function DetailPanel({
           <div className="panel-heading">
             <div className="tab-titles page-header-titles">
               {isHome ? (
-                <img
+                <span
                   className="tab-icon icon-home"
-                  src="/img/coloured-node-home.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                  draggable={false}
+                  aria-hidden
+                  dangerouslySetInnerHTML={{ __html: hubSvg() }}
                 />
               ) : (
                 <span
                   className={`tab-icon tab-shape tab-shape-${MENU_SHAPE[pageId]}`}
                   aria-hidden
+                  dangerouslySetInnerHTML={{
+                    __html: shapeSvg(MENU_SHAPE[pageId] ?? "hex"),
+                  }}
                 />
               )}
               <span className="tab-title">
-                {isHome ? "POLYNEX" : page.title.toUpperCase()}
+                {isHome ? "Plusmarket" : page.title.toUpperCase()}
               </span>
-              {!isHome && (
+              {isHome ? (
+                <span className="tab-title panel-version">v0.2.1</span>
+              ) : (
                 <button
                   type="button"
                   className="panel-back"

@@ -136,14 +136,14 @@ export const HOME_MEDIA: { src: string; landscape?: boolean }[] = [
 
 export const PAGES: Record<string, PageContent> = {
   "/": {
-    title: "Polynex",
+    title: "Plusmarket",
     uri: "/",
     description:
       "Polynex is a trading bot for Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
     // ponytail: bot URL placeholder until live
     ctas: [
       { href: "#", label: "Launch bot", icon: "telegram" },
-      { href: "/docs", label: "Docs", icon: "file", ghost: true },
+      { href: "/changelog", label: "Changelog", ghost: true },
     ],
   },
   ...Object.fromEntries(

@@ -3,6 +3,9 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { HOME_IDS, LOGO_EDGES, LOGO_SEAT, MENU_NODES, PAGES, SOFT_EDGES } from "@/lib/menu";
+import { hubSvg, shapeSvg } from "@/lib/shapes";
+
+const SHAPE_BY_ID = Object.fromEntries(MENU_NODES.map((n) => [n.id, n.shape]));
 
 const NODE = 36;
 const half = NODE / 2;
@@ -75,8 +78,8 @@ function px(n: number) {
   return Math.round(n) + 0.5;
 }
 
-const EDGE = 11; // satellite ends
-const EDGE_HUB = 14; // hub end
+const EDGE = 0; // satellite ends
+const EDGE_HUB = 0; // hub end — stop before quatrefoil hole
 
 function straight(a: MapNode, b: MapNode, offset = 0) {
   let x1 = a.x + half;
@@ -167,8 +170,8 @@ export default function NodeMap({
         (d) =>
           `<div class="node-inner">${
             d.id === "/"
-              ? `<img src="/img/coloured-node-home.svg" alt="" width="18" height="18" draggable="false" />`
-              : ""
+              ? hubSvg()
+              : shapeSvg(SHAPE_BY_ID[d.id] ?? "hex")
           }</div>` +
           `<span class="node-label"><span><h2>${d.title}</h2>${
             d.id === "/" ? "<br /><h3>v0.2.1</h3>" : ""

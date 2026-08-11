@@ -50,6 +50,8 @@ body {
   color: var(--ink);
   line-height: 1;
   -webkit-font-smoothing: antialiased;
+  /* Brunswick ss03 = Wide (calt off so widths don't randomize) */
+  font-feature-settings: "ss03" 1, "calt" 0;
 }
 
 button {
@@ -113,6 +115,7 @@ a:hover {
 .map-stage svg.map-lines {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
@@ -129,6 +132,10 @@ a:hover {
   touch-action: none;
   user-select: none;
   opacity: 0;
+}
+
+.node.home-node {
+  z-index: 3;
 }
 
 .link {
@@ -172,7 +179,7 @@ a:hover {
 .focus-ready .node.previously-visible .node-label h2,
 .focus-ready .node.newly-visible.node-shape .node-inner,
 .focus-ready .node.previously-visible.node-shape .node-inner {
-  transition: color 200ms ease, background-color 200ms ease;
+  transition: color 200ms ease;
 }
 
 /* Focus mute via grey art (not node opacity — that makes shapes see-through) */
@@ -180,7 +187,7 @@ a:hover {
   color: #999;
 }
 .node.muted-node.node-shape .node-inner {
-  background: #999;
+  color: #999;
 }
 .link.muted-link.newly-visible,
 .link.muted-link.previously-visible {
@@ -211,49 +218,45 @@ a:hover {
 }
 
 .node.home-node .node-inner {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   background: none;
 }
 
-.node.home-node .node-inner img {
+.node.home-node .node-inner svg {
   display: block;
   width: 100%;
   height: 100%;
+  overflow: visible;
   pointer-events: none;
-  user-select: none;
-  /* keep vector AA when scaled / hovered */
-  image-rendering: auto;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  animation: hub-spin 10s linear infinite;
+}
+
+@keyframes hub-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .node.node-shape .node-inner {
-  background: var(--ink);
-  background-image: none;
+  background: none;
+  color: var(--ink);
 }
 
-.node.node-shape-triangle .node-inner {
-  width: 16px;
-  height: 14px;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+.node.node-shape .node-inner svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.node.node-shape-square .node-inner {
-  width: 13px;
-  height: 13px;
-}
-
-.node.node-shape-circle .node-inner {
+.node.node-shape-triangle .node-inner,
+.node.node-shape-square .node-inner,
+.node.node-shape-circle .node-inner,
+.node.node-shape-hex .node-inner {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-}
-
-.node.node-shape-hex .node-inner {
-  width: 15px;
-  height: 15px;
-  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
 }
 
 .node-label {
@@ -271,13 +274,12 @@ a:hover {
 .node-label h2 {
   display: inline;
   font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.45em;
-  letter-spacing: 0.1em;
   background: rgb(245, 246, 242);
   border-radius: 5px;
   padding: 1px 3px;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .node-label h3 {
@@ -507,56 +509,58 @@ a:hover {
 }
 
 .icon-home {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   display: block;
-  object-fit: contain;
-  image-rendering: auto;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
   flex-shrink: 0;
+  animation: hub-spin 10s linear infinite;
+}
+
+.icon-home svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 .tab-shape {
   display: block;
-  background: var(--ink);
+  color: var(--ink);
   flex-shrink: 0;
 }
 
-.tab-shape-triangle {
-  width: 12px;
-  height: 11px;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+.tab-shape svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.tab-shape-square {
-  width: 11px;
-  height: 11px;
-}
-
-.tab-shape-circle {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-}
-
+.tab-shape-triangle,
+.tab-shape-square,
+.tab-shape-circle,
 .tab-shape-hex {
-  width: 12px;
-  height: 12px;
-  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
+  width: 14px;
+  height: 14px;
 }
 
 .tab-title {
   font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.45em;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  text-transform: s;
 }
 
 .tab-title.is-version {
   text-transform: none;
   letter-spacing: 0.05em;
+}
+
+.panel-version {
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0.05em;
+  color: #999;
 }
 
 .tab-indicator {
@@ -760,12 +764,11 @@ a:hover {
   text-align: center;
   text-decoration: none;
   border: 1px solid var(--ink);
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--ink);
   color: #fff;
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 13px;
+  text-transform: capitalize;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
