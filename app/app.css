@@ -39,6 +39,7 @@ main {
 
 :root {
   --ink: #0B0C10;
+  --hub-size: 20px; /* match circle satellite nodes */
 }
 
 html,
@@ -96,7 +97,6 @@ a:hover {
 .topbar p {
   margin: 0 auto;
   max-width: 64rem; /* max-w-5xl */
-  text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
@@ -177,17 +177,26 @@ a:hover {
 
 .focus-ready .node.newly-visible .node-label h2,
 .focus-ready .node.previously-visible .node-label h2,
-.focus-ready .node.newly-visible.node-shape .node-inner,
-.focus-ready .node.previously-visible.node-shape .node-inner {
+.focus-ready .node.newly-visible .number,
+.focus-ready .node.previously-visible .number {
   transition: color 200ms ease;
+}
+
+.focus-ready .node.newly-visible.node-shape .node-inner svg *,
+.focus-ready .node.previously-visible.node-shape .node-inner svg * {
+  transition: fill 200ms ease, stroke 200ms ease;
 }
 
 /* Focus mute via grey art (not node opacity — that makes shapes see-through) */
 .node.muted-node .node-label h2 {
   color: #999;
 }
+.node.muted-node .number {
+  color: #888;
+}
 .node.muted-node.node-shape .node-inner {
-  color: #999;
+  --node-fill: #f5f6f2;
+  --node-stroke: #999;
 }
 .link.muted-link.newly-visible,
 .link.muted-link.previously-visible {
@@ -218,15 +227,15 @@ a:hover {
 }
 
 .node.home-node .node-inner {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background: none;
 }
 
 .node.home-node .node-inner svg {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 20px;
+  height: 20px;
   overflow: visible;
   pointer-events: none;
   animation: hub-spin 10s linear infinite;
@@ -240,7 +249,8 @@ a:hover {
 
 .node.node-shape .node-inner {
   background: none;
-  color: var(--ink);
+  --node-fill: #fff;
+  --node-stroke: var(--ink);
 }
 
 .node.node-shape .node-inner svg {
@@ -251,12 +261,42 @@ a:hover {
   pointer-events: none;
 }
 
-.node.node-shape-triangle .node-inner,
-.node.node-shape-square .node-inner,
-.node.node-shape-circle .node-inner,
+.node.node-shape-triangle .node-inner {
+  width: 22px;
+  height: 18px;
+}
+
+.node.node-shape-square .node-inner {
+  width: 20px;
+  height: 20px;
+}
+
+.node.node-shape-circle .node-inner {
+  width: 20px;
+  height: 20px;
+}
+
 .node.node-shape-hex .node-inner {
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 20px;
+}
+
+.node .number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  display: block;
+  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 24px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: var(--ink);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .node-label {
@@ -509,8 +549,8 @@ a:hover {
 }
 
 .icon-home {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: block;
   flex-shrink: 0;
   animation: hub-spin 10s linear infinite;
@@ -518,21 +558,24 @@ a:hover {
 
 .icon-home svg {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 20px;
+  height: 20px;
   overflow: visible;
 }
 
 .tab-shape {
   display: block;
-  color: var(--ink);
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
+  --node-fill: #fff;
+  --node-stroke: var(--ink);
 }
 
 .tab-shape svg {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 20px;
+  height: 20px;
   overflow: visible;
 }
 
@@ -540,15 +583,15 @@ a:hover {
 .tab-shape-square,
 .tab-shape-circle,
 .tab-shape-hex {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
 }
 
 .tab-title {
   font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.45em;
-  text-transform: s;
+  text-transform: capitalize;
 }
 
 .tab-title.is-version {

@@ -6,6 +6,7 @@ import { HOME_IDS, LOGO_EDGES, LOGO_SEAT, MENU_NODES, PAGES, SOFT_EDGES } from "
 import { hubSvg, shapeSvg } from "@/lib/shapes";
 
 const SHAPE_BY_ID = Object.fromEntries(MENU_NODES.map((n) => [n.id, n.shape]));
+const NUM_BY_ID = Object.fromEntries(MENU_NODES.map((n, i) => [n.id, String(i + 1)]));
 
 const NODE = 36;
 const half = NODE / 2;
@@ -173,6 +174,9 @@ export default function NodeMap({
               ? hubSvg()
               : shapeSvg(SHAPE_BY_ID[d.id] ?? "hex")
           }</div>` +
+          (d.id === "/"
+            ? ""
+            : `<span class="number">${NUM_BY_ID[d.id] ?? ""}</span>`) +
           `<span class="node-label"><span><h2>${d.title}</h2>${
             d.id === "/" ? "<br /><h3>v0.2.1</h3>" : ""
           }</span></span>`

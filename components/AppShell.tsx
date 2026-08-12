@@ -34,7 +34,7 @@ export default function AppShell() {
     <>
       <div className="topbar">
         <p>
-          Only open Polynex from this
+          Only open Plusmarket from this
           site. Never paste a private key into chat.
         </p>
       </div>

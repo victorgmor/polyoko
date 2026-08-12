@@ -1,4 +1,4 @@
-/** Map navigation nodes (besides Polynex hub). Each has its own info page. */
+/** Map navigation nodes (besides Plusmarket hub). Each has its own info page. */
 export type MenuSection = {
   heading?: string;
   body?: string;
@@ -38,8 +38,8 @@ export const MENU_NODES: MenuNode[] = [
   {
     id: "changelog",
     title: "Changelog",
-    shape: "triangle",
-    body: "Release notes and product updates for Polynex.",
+    shape: "circle",
+    body: "Release notes and product updates for Plusmarket.",
     sections: [
       {
         heading: "v0.2.1",
@@ -55,16 +55,16 @@ export const MENU_NODES: MenuNode[] = [
   {
     id: "docs",
     title: "Docs",
-    shape: "square",
+    shape: "circle",
     body: "Your Polymarket trading bot — built to execute, track, and manage positions with less friction.",
     sections: [
       {
         heading: "Introduction",
-        body: "Polynex is a trading bot for Polymarket prediction markets. It is built for people who want a fast path from idea to order — browse markets, size positions, and manage risk without living inside a heavyweight web UI.\n\nPolymarket is powerful, but the day-to-day flow can be slow. Polynex sits on top of that stack and turns common actions into a tight loop: find a market, place a trade, watch the book, adjust.\n\nWhether you are new to prediction markets or already trading volume on Polygon, Polynex is meant to make Polymarket feel immediate.",
+        body: "Plusmarket is a trading bot for Polymarket prediction markets. It is built for people who want a fast path from idea to order — browse markets, size positions, and manage risk without living inside a heavyweight web UI.\n\nPolymarket is powerful, but the day-to-day flow can be slow. Plusmarket sits on top of that stack and turns common actions into a tight loop: find a market, place a trade, watch the book, adjust.\n\nWhether you are new to prediction markets or already trading volume on Polygon, Plusmarket is meant to make Polymarket feel immediate.",
       },
       {
         heading: "Overview",
-        body: "Polynex focuses on binary YES/NO markets across politics, sports, crypto, and current events. Trades settle on-chain on Polygon for transparency; the bot handles the interaction layer so you spend time on markets, not plumbing.\n\nCore loop: discover markets, open and close positions, place limit orders where supported, and keep a clear view of exposure and PnL. Automation-minded users can lean on bot-driven workflows; discretionary traders can stay fully hands-on.",
+        body: "Plusmarket focuses on binary YES/NO markets across politics, sports, crypto, and current events. Trades settle on-chain on Polygon for transparency; the bot handles the interaction layer so you spend time on markets, not plumbing.\n\nCore loop: discover markets, open and close positions, place limit orders where supported, and keep a clear view of exposure and PnL. Automation-minded users can lean on bot-driven workflows; discretionary traders can stay fully hands-on.",
       },
       {
         heading: "Highlights",
@@ -81,7 +81,7 @@ export const MENU_NODES: MenuNode[] = [
         heading: "Fees",
         body: "Transparent pricing versus trading through the Polymarket interface.",
         compare: {
-          head: ["Cost", "Polynex", "Polymarket Interface"],
+          head: ["Cost", "Plusmarket", "Polymarket Interface"],
           rows: [
             ["Fee per trade", "0.5%", "2%"],
             ["Gas fees", "$0 (covered)", "Variable"],
@@ -98,7 +98,7 @@ export const MENU_NODES: MenuNode[] = [
       },
       {
         heading: "Terms of Use",
-        body: "By using Polynex you verify and agree that:",
+        body: "By using Plusmarket you verify and agree that:",
         items: [
           "You are at least 18 years of age.",
           "You are not located in or trading from a restricted location where prediction market trading is prohibited.",
@@ -113,14 +113,15 @@ export const MENU_NODES: MenuNode[] = [
     id: "community",
     title: "Community",
     shape: "circle",
-    body: "Join the Polynex community on Telegram.",
-    hrefLabel: "Coming Soon",
+    body: "Get updates, market talk, and bot status.",
+    href: "https://t.me/+Q0aItbvNIGM5MzVh",
+    hrefLabel: "Join on Telegram  →",
   },
   {
     id: "x",
     title: "X",
-    shape: "hex",
-    body: "Follow Polynex for announcements and updates.",
+    shape: "circle",
+    body: "Follow Plusmarket for announcements and updates.",
     href: "https://x.com/",
     hrefLabel: "Open X",
   },
@@ -139,10 +140,10 @@ export const PAGES: Record<string, PageContent> = {
     title: "Plusmarket",
     uri: "/",
     description:
-      "Polynex is a trading bot for Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
+      "Plusmarket is a trading bot for Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
     // ponytail: bot URL placeholder until live
     ctas: [
-      { href: "#", label: "Launch bot", icon: "telegram" },
+      { href: "https://t.me/plusmarket_trade_bot", label: "Launch bot", icon: "telegram" },
       { href: "/changelog", label: "Changelog", ghost: true },
     ],
   },
@@ -166,7 +167,7 @@ export function getPage(id: string | null): PageContent | null {
   return PAGES[id] ?? null;
 }
 
-/** Polymarket-logo seats (x,y in 0..1). MR = Polynex tip. */
+/** Polymarket-logo seats (x,y in 0..1). MR = Plusmarket tip. */
 export const LOGO_SEAT: Record<string, { x: number; y: number }> = {
   "/": { x: 0.78, y: 0.5 },
   changelog: { x: 0.22, y: 0.28 },
