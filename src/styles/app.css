@@ -110,7 +110,7 @@ a:hover {
 
 .powered-by svg {
   display: block;
-  height: 12px;
+  height: 18px;
   width: auto;
 }
 
@@ -589,6 +589,7 @@ a:hover {
 .page-accordion-panel {
   display: grid;
   grid-template-rows: 0fr;
+  overflow: hidden;
   transition: grid-template-rows 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 

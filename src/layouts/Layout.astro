@@ -1,0 +1,20 @@
+---
+import AppShell from "../components/AppShell";
+import "../styles/app.css";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/icon" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon" />
+    <title>Plusmarket</title>
+    <meta name="description" content="Plusmarket trading bot on Polymarket." />
+  </head>
+  <body>
+    <main id="app">
+      <AppShell client:load pathname={Astro.url.pathname} />
+    </main>
+  </body>
+</html>

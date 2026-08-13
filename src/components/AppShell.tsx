@@ -1,7 +1,4 @@
-"use client";
-
-import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import DetailPanel from "./DetailPanel";
 import { getPage, MENU_NODES } from "@/lib/menu";
 import { hubSvg } from "@/lib/shapes";
@@ -15,19 +12,21 @@ function pageIdToPath(id: string): string {
   return id === "/" ? "/" : `/${id}`;
 }
 
-export default function AppShell() {
-  const pathname = usePathname() || "/";
-  const router = useRouter();
+export default function AppShell({ pathname: initialPath }: { pathname: string }) {
+  const [pathname, setPathname] = useState(initialPath);
   const pageId = pathToPageId(pathname);
 
   useEffect(() => {
-    const id = pathname === "/" ? "/" : pathname.replace(/^\//, "");
-    if (!getPage(id) && pathname !== "/") router.replace("/");
-  }, [pathname, router]);
+    const onPop = () => setPathname(window.location.pathname);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   function go(id: string) {
     const next = pageIdToPath(getPage(id) ? id : "/");
-    if (next !== pathname) router.push(next, { scroll: false });
+    if (next === pathname) return;
+    history.pushState(null, "", next);
+    setPathname(next);
   }
 
   return (

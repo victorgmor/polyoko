@@ -1,0 +1,11 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { PAGES } from "../lib/menu";
+
+export function getStaticPaths() {
+  return Object.keys(PAGES)
+    .filter((id) => id !== "/")
+    .map((slug) => ({ params: { slug } }));
+}
+---
+<Layout />
