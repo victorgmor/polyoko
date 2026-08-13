@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: "Plusmarket",
   description: "Plusmarket trading bot on Polymarket.",
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/favicon.svg" }],
+    icon: [{ url: "/icon", type: "image/svg+xml" }],
+    apple: [{ url: "/icon" }],
   },
 };
 

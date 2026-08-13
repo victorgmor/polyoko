@@ -1,4 +1,4 @@
-/** Map navigation nodes (besides Plusmarket hub). Each has its own info page. */
+/** Map navigation nodes. Each has its own info page. */
 export type MenuSection = {
   heading?: string;
   body?: string;
@@ -133,6 +133,8 @@ export const HOME_MEDIA: { src: string; landscape?: boolean }[] = [
   { src: "/img/home/2.png", landscape: true },
   { src: "/img/home/3.png", landscape: true },
   { src: "/img/home/4.png", landscape: true },
+  { src: "/img/home/5.png", landscape: true },
+  { src: "/img/home/6.png", landscape: true },
 ];
 
 export const PAGES: Record<string, PageContent> = {
@@ -166,31 +168,3 @@ export function getPage(id: string | null): PageContent | null {
   if (!id) return null;
   return PAGES[id] ?? null;
 }
-
-/** Polymarket-logo seats (x,y in 0..1). MR = Plusmarket tip. */
-export const LOGO_SEAT: Record<string, { x: number; y: number }> = {
-  "/": { x: 0.78, y: 0.5 },
-  changelog: { x: 0.22, y: 0.28 },
-  docs: { x: 0.78, y: 0.08 },
-  community: { x: 0.22, y: 0.72 },
-  x: { x: 0.78, y: 0.92 },
-};
-
-/** Polymarket mark edges. */
-export const LOGO_EDGES: [string, string][] = [
-  ["changelog", "docs"],
-  ["docs", "/"],
-  ["/", "x"],
-  ["x", "community"],
-  ["community", "changelog"],
-  ["changelog", "/"],
-  ["community", "/"],
-];
-
-/** Extra chords — low opacity diagonals (not logo edges). */
-export const SOFT_EDGES: { a: string; b: string; offset: number }[] = [
-  { a: "changelog", b: "x", offset: 0 },
-  { a: "docs", b: "community", offset: 0 },
-];
-
-export const HOME_IDS = Object.keys(LOGO_SEAT);

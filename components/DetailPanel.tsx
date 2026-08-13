@@ -10,13 +10,10 @@ import {
 import {
   getPage,
   HOME_MEDIA,
-  MENU_NODES,
   type MenuSection,
   type PageContent,
 } from "@/lib/menu";
-import { hubSvg, shapeSvg } from "@/lib/shapes";
-
-const MENU_SHAPE = Object.fromEntries(MENU_NODES.map((n) => [n.id, n.shape]));
+import { hubSvg, pageSvg } from "@/lib/shapes";
 
 function Paras({ text }: { text: string }) {
   return text
@@ -288,11 +285,9 @@ export default function DetailPanel({
                 />
               ) : (
                 <span
-                  className={`tab-icon tab-shape tab-shape-${MENU_SHAPE[pageId]}`}
+                  className="tab-icon icon-page"
                   aria-hidden
-                  dangerouslySetInnerHTML={{
-                    __html: shapeSvg(MENU_SHAPE[pageId] ?? "hex"),
-                  }}
+                  dangerouslySetInnerHTML={{ __html: pageSvg() }}
                 />
               )}
               <span className="tab-title">
