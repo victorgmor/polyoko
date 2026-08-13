@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import { fileURLToPath } from "node:url";
 
 export default defineConfig({
+  site: "https://plusmarket.trade",
   trailingSlash: "never",
   devToolbar: { enabled: false },
   integrations: [react()],

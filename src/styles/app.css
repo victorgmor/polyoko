@@ -589,7 +589,6 @@ a:hover {
 .page-accordion-panel {
   display: grid;
   grid-template-rows: 0fr;
-  overflow: hidden;
   transition: grid-template-rows 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -597,9 +596,12 @@ a:hover {
   grid-template-rows: 1fr;
 }
 
-.page-accordion-body {
-  overflow: hidden;
+.page-accordion-clip {
   min-height: 0;
+  overflow: hidden;
+}
+
+.page-accordion-body {
   display: flex;
   flex-direction: column;
   gap: 8px;

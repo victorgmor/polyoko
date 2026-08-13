@@ -82,7 +82,9 @@ function Section({
         <span className="tab-indicator" aria-hidden />
       </button>
       <div className="page-accordion-panel">
-        <div className="page-accordion-body">{body}</div>
+        <div className="page-accordion-clip">
+          <div className="page-accordion-body">{body}</div>
+        </div>
       </div>
     </div>
   );
@@ -232,40 +234,27 @@ export default function DetailPanel({
     return () => clearTimeout(t);
   }, [isHome]);
 
-  // Page change: animate height. Accordion/content resize: track up to 70vh (same max as CSS).
+  // Page change: animate height, then let CSS auto-size (accordions).
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const inner = innerRef.current;
     if (!shell || !inner) return;
 
-    const cap = () =>
-      Math.min(inner.offsetHeight, window.innerHeight * 0.7);
-
-    const next = cap();
-    const from = sizingRef.current ? shell.offsetHeight : prevH.current;
+    const next = Math.min(inner.offsetHeight, window.innerHeight * 0.7);
+    const from = prevH.current;
     if (!from || Math.abs(from - next) < 1) {
       prevH.current = next;
-      sizingRef.current = false;
-      setPanelH(next);
+      setPanelH(undefined);
       setSizing(false);
-    } else {
-      sizingRef.current = true;
-      setSizing(true);
-      setPanelH(from);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setPanelH(next));
-      });
+      return;
     }
 
-    const ro = new ResizeObserver(() => {
-      if (sizingRef.current) return;
-      const h = cap();
-      if (Math.abs(h - prevH.current) < 1) return;
-      prevH.current = h;
-      setPanelH(h);
+    sizingRef.current = true;
+    setSizing(true);
+    setPanelH(from);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setPanelH(next));
     });
-    ro.observe(inner);
-    return () => ro.disconnect();
   }, [pageId]);
 
   return (
@@ -309,10 +298,9 @@ export default function DetailPanel({
             style={panelH != null ? { height: panelH } : undefined}
             onTransitionEnd={(e) => {
               if (e.propertyName !== "height") return;
-              const h = shellRef.current?.offsetHeight ?? 0;
-              prevH.current = h;
+              prevH.current = shellRef.current?.offsetHeight ?? 0;
               sizingRef.current = false;
-              setPanelH(h);
+              setPanelH(undefined);
               setSizing(false);
             }}
           >
