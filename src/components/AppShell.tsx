@@ -40,16 +40,27 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
           >
             Home
           </button>
-          {MENU_NODES.map((n) => (
-            <button
-              key={n.id}
-              type="button"
-              className={pageId === n.id ? "is-active" : undefined}
-              onClick={() => go(n.id)}
-            >
-              {n.title}
-            </button>
-          ))}
+          {MENU_NODES.map((n) =>
+            n.id === "x" && n.href ? (
+              <a
+                key={n.id}
+                href={n.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {n.title}
+              </a>
+            ) : (
+              <button
+                key={n.id}
+                type="button"
+                className={pageId === n.id ? "is-active" : undefined}
+                onClick={() => go(n.id)}
+              >
+                {n.title}
+              </button>
+            ),
+          )}
         </nav>
       </header>
       <div className="bg-mark" aria-hidden>

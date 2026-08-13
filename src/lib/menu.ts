@@ -122,7 +122,7 @@ export const MENU_NODES: MenuNode[] = [
     title: "X",
     shape: "circle",
     body: "Follow Plusmarket for announcements and updates.",
-    href: "https://x.com/",
+    href: "https://x.com/PlusmarketTrade",
     hrefLabel: "Open X",
   },
 ];
@@ -142,7 +142,7 @@ export const PAGES: Record<string, PageContent> = {
     title: "Plusmarket",
     uri: "/",
     description:
-      "Plusmarket is a trading bot for Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
+      "The easiest way to trade on Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
     // ponytail: bot URL placeholder until live
     ctas: [
       { href: "https://t.me/plusmarket_trade_bot", label: "Launch bot", icon: "telegram" },

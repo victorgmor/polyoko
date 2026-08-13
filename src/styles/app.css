@@ -136,14 +136,17 @@ a:hover {
   transform: translateX(-50%);
 }
 
-.site-nav button {
+.site-nav button,
+.site-nav a {
   font-size: 13px;
   color: var(--fg);
   opacity: 0.6;
+  text-decoration: none;
 }
 
 .site-nav button:hover,
-.site-nav button.is-active {
+.site-nav button.is-active,
+.site-nav a:hover {
   opacity: 1;
 }
 
@@ -528,11 +531,11 @@ a:hover {
 }
 
 .tab-indicator::after {
-  content: "↓";
+  content: "+";
 }
 
 .page-accordion.is-open > .page-accordion-title .tab-indicator::after {
-  content: "↑";
+  content: "–";
 }
 
 .tab-content {
