@@ -56,7 +56,7 @@ export const MENU_NODES: MenuNode[] = [
     id: "wishlist",
     title: "Wishlist",
     shape: "circle",
-    body: "Vote in the Telegram bot with /vote. Ranked here by votes.",
+    body: "Vote through our Telegram bot with /vote.\n\nRanked here by votes.",
   },
   {
     id: "docs",
