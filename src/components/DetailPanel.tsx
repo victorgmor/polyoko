@@ -97,7 +97,7 @@ function WishlistRank() {
   const [rows, setRows] = useState<WishRow[] | null>(null);
 
   useEffect(() => {
-    fetch(WISHLIST_JSON)
+    fetch(WISHLIST_JSON, { signal: AbortSignal.timeout(10000) })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data) => {
         const options = Array.isArray(data?.options) ? data.options : [];

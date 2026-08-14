@@ -170,7 +170,7 @@ export const PAGES: Record<string, PageContent> = {
   ),
 };
 
-export const WISHLIST_JSON = "https://51.20.98.145/wishlist.json";
+export const WISHLIST_JSON = "/wishlist.json";
 
 export function getPage(id: string | null): PageContent | null {
   if (!id) return null;
