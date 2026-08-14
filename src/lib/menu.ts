@@ -53,6 +53,12 @@ export const MENU_NODES: MenuNode[] = [
     ],
   },
   {
+    id: "wishlist",
+    title: "Wishlist",
+    shape: "circle",
+    body: "Vote in the Telegram bot with /vote. Ranked here by votes.",
+  },
+  {
     id: "docs",
     title: "Docs",
     shape: "circle",
@@ -163,6 +169,8 @@ export const PAGES: Record<string, PageContent> = {
     ])
   ),
 };
+
+export const WISHLIST_JSON = "https://51.20.98.145/wishlist.json";
 
 export function getPage(id: string | null): PageContent | null {
   if (!id) return null;

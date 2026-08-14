@@ -663,6 +663,24 @@ a:hover {
   display: list-item;
 }
 
+.wishlist-rank {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wishlist-rank li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.28);
+}
+
+.wishlist-rank li:last-child {
+  border-bottom: none;
+}
+
 .launch-btns {
   display: flex;
   gap: 8px;

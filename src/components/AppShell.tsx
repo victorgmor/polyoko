@@ -41,7 +41,7 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
             Home
           </button>
           {MENU_NODES.map((n) =>
-            n.id === "x" && n.href ? (
+            n.href?.startsWith("http") ? (
               <a
                 key={n.id}
                 href={n.href}

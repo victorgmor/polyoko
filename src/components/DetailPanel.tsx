@@ -8,6 +8,7 @@ import {
 import {
   getPage,
   HOME_MEDIA,
+  WISHLIST_JSON,
   type MenuSection,
   type PageContent,
 } from "@/lib/menu";
@@ -90,6 +91,45 @@ function Section({
   );
 }
 
+type WishRow = { id: string; label: string; votes: number };
+
+function WishlistRank() {
+  const [rows, setRows] = useState<WishRow[] | null>(null);
+
+  useEffect(() => {
+    fetch(WISHLIST_JSON)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data) => {
+        const options = Array.isArray(data?.options) ? data.options : [];
+        setRows(
+          [...options]
+            .map((o) => ({
+              id: String(o.id ?? o.label ?? ""),
+              label: String(o.label ?? o.id ?? ""),
+              votes: Number(o.votes) || 0,
+            }))
+            .filter((o) => o.id)
+            .sort((a, b) => b.votes - a.votes || a.label.localeCompare(b.label)),
+        );
+      })
+      .catch(() => setRows([]));
+  }, []);
+
+  if (rows == null) return <p>Loading…</p>;
+  if (!rows.length) return <p>No votes yet.</p>;
+
+  return (
+    <ol className="wishlist-rank">
+      {rows.map((o) => (
+        <li key={o.id}>
+          <span>{o.label}</span>
+          <span>{o.votes}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function PageBody({
   page,
   isHome,
@@ -117,6 +157,7 @@ function PageBody({
   return (
     <div className={`page-body${isHome ? " page-body-home" : ""}`}>
       <Paras text={page.description} />
+      {page.uri === "wishlist" && <WishlistRank />}
       {sections.map((s, i) => (
         <Section
           key={s.heading ?? s.body?.slice(0, 24)}
