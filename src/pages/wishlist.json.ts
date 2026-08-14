@@ -1,53 +1,53 @@
 import type { APIRoute } from "astro";
-import http from "node:http";
-import https from "node:https";
+import { get } from "@vercel/blob";
 
 export const prerender = false;
 
-const UPSTREAMS = [
-  "https://51.20.98.145/wishlist.json",
-  "http://51.20.98.145/wishlist.json",
-];
+const EMPTY = {
+  updatedAt: null,
+  options: [] as Array<{ id: string; label: string; votes: number }>,
+};
 
-function pull(url: string): Promise<string> {
-  const lib = url.startsWith("https") ? https : http;
-  return new Promise((resolve, reject) => {
-    const req = lib.get(
-      url,
-      { rejectUnauthorized: false, timeout: 8000 },
-      (res) => {
-        if ((res.statusCode ?? 500) >= 400) {
-          reject(new Error(String(res.statusCode)));
-          res.resume();
-          return;
-        }
-        const chunks: Buffer[] = [];
-        res.on("data", (c) => chunks.push(c));
-        res.on("end", () => resolve(Buffer.concat(chunks).toString()));
-      },
-    );
-    req.on("error", reject);
-    req.on("timeout", () => req.destroy(new Error("timeout")));
-  });
+function publicPayload(value: unknown) {
+  const source = value as { updatedAt?: unknown; options?: unknown };
+  if (!Array.isArray(source?.options)) throw new Error("Invalid wishlist payload");
+  return {
+    updatedAt: typeof source.updatedAt === "string" ? source.updatedAt : null,
+    options: source.options
+      .slice(0, 100)
+      .map((item) => item as Record<string, unknown>)
+      .filter(
+        (item) =>
+          typeof item.id === "string" &&
+          typeof item.label === "string" &&
+          typeof item.votes === "number" &&
+          Number.isInteger(item.votes) &&
+          item.votes >= 0,
+      )
+      .map((item) => ({
+        id: String(item.id),
+        label: String(item.label),
+        votes: Number(item.votes),
+      })),
+  };
 }
 
 export const GET: APIRoute = async () => {
-  for (const url of UPSTREAMS) {
-    try {
-      const body = await pull(url);
-      JSON.parse(body);
-      return new Response(body, {
-        headers: {
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "public, max-age=15",
-        },
-      });
-    } catch {
-      // try next
-    }
+  try {
+    const blob = await get("wishlist/current.json", {
+      access: "private",
+      useCache: false,
+    });
+    const payload = blob
+      ? publicPayload(await new Response(blob.stream).json())
+      : EMPTY;
+    return Response.json(payload, {
+      headers: { "cache-control": "public, s-maxage=15, stale-while-revalidate=60" },
+    });
+  } catch {
+    return Response.json(EMPTY, {
+      status: 503,
+      headers: { "cache-control": "no-store" },
+    });
   }
-  return new Response(JSON.stringify({ options: [] }), {
-    status: 502,
-    headers: { "content-type": "application/json; charset=utf-8" },
-  });
 };

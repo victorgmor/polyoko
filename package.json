@@ -9,6 +9,7 @@
   "dependencies": {
     "@astrojs/react": "^6.0.2",
     "@astrojs/vercel": "^11.0.5",
+    "@vercel/blob": "^2.8.0",
     "astro": "^7.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
