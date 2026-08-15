@@ -113,6 +113,16 @@ export const MENU_NODES: MenuNode[] = [
           "Prediction markets involve risk of loss. Nothing here is financial advice.",
         ],
       },
+      {
+        heading: "Privacy Policy",
+        body: "Plusmarket collects only what it needs to run the site and Telegram bot.",
+        items: [
+          "The website does not require an account. We do not sell personal data.",
+          "Votes are cast in Telegram. We store your Telegram user id against each option so you can vote once. Rankings on the site show counts only — not your name or user id.",
+          "If you write to us on Telegram or X, we see whatever that platform already shows.",
+          "Hosting and analytics providers may process standard request logs (IP, browser, pages) to keep the service up.",
+        ],
+      },
     ],
   },
   {
