@@ -45,6 +45,7 @@ main {
   --panel: rgba(16, 18, 28, 0.8);
   --cta: #d4d0f7;
   --hub-size: 20px; /* match circle satellite nodes */
+  --font: "Brunswick Grotesque";
 }
 
 html,
@@ -55,7 +56,7 @@ body {
   background: var(--paper);
   background-image: radial-gradient(ellipse 80% 55% at 50% 42%, #5b8cff 0%, var(--paper) 72%);
   color: var(--ink);
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   /* Brunswick ss03 = Wide (calt off so widths don't randomize) */
@@ -95,7 +96,7 @@ a:hover {
   justify-content: center;
   padding: 8px 20px calc(8px + env(safe-area-inset-bottom, 0px));
   background: transparent;
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 1.35em;
   color: var(--fg);
@@ -124,7 +125,7 @@ a:hover {
   display: flex;
   align-items: center;
   padding: 32px 24px;
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: var(--fg);
 }
 
@@ -225,7 +226,7 @@ a:hover {
 .page-container {
   width: 420px;
   position: relative;
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 1.45em;
   letter-spacing: -0.01em;
@@ -467,7 +468,7 @@ a:hover {
 }
 
 .tab-title {
-  font-family: "Brunswick Grotesque", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.45em;
   text-transform: capitalize;
@@ -724,4 +725,24 @@ a:hover {
 
 .index-link {
   text-decoration: underline;
+}
+
+.font-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+}
+
+.font-pick input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  outline: 0;
 }

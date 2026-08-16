@@ -12,7 +12,41 @@ import {
   type MenuSection,
   type PageContent,
 } from "@/lib/menu";
+import { applyFont, PAGE_FONT, savedFont } from "@/lib/font";
 import { hubSvg, pageSvg } from "@/lib/shapes";
+
+function FontPick() {
+  const [fonts, setFonts] = useState<string[]>([]);
+  const [cur, setCur] = useState(PAGE_FONT);
+
+  useEffect(() => {
+    setCur(savedFont());
+    fetch("/google-fonts.json")
+      .then((r) => r.json())
+      .then((list: string[]) => setFonts(list));
+  }, []);
+
+  return (
+    <label className="font-pick">
+      Font
+      <input
+        list="google-fonts"
+        value={cur}
+        onChange={(e) => {
+          const name = e.target.value;
+          setCur(name);
+          if (name === PAGE_FONT || fonts.includes(name)) applyFont(name);
+        }}
+      />
+      <datalist id="google-fonts">
+        <option value={PAGE_FONT} />
+        {fonts.map((f) => (
+          <option key={f} value={f} />
+        ))}
+      </datalist>
+    </label>
+  );
+}
 
 function Paras({ text }: { text: string }) {
   return text
@@ -223,6 +257,7 @@ function PageBody({
           </p>
         )
       )}
+      {isHome && <FontPick />}
     </div>
   );
 }
