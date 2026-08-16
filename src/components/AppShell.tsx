@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import DetailPanel from "./DetailPanel";
 import { getPage, MENU_NODES } from "@/lib/menu";
-import { restoreFont } from "@/lib/font";
 import { hubSvg } from "@/lib/shapes";
 
 function pathToPageId(pathname: string): string {
@@ -18,7 +17,6 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
   const pageId = pathToPageId(pathname);
 
   useEffect(() => {
-    restoreFont();
     const onPop = () => setPathname(window.location.pathname);
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);

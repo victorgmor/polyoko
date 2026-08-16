@@ -1,11 +1,40 @@
 @font-face {
-  font-family: "Brunswick Grotesque";
+  font-family: "Overpass Mono";
   font-style: normal;
-  font-weight: normal;
-  src: url("/fonts/BrunswickGrotesque-Regular.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/OverpassMono-Light.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Overpass Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OverpassMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Overpass Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/OverpassMono-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Overpass Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/OverpassMono-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Overpass Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/OverpassMono-Bold.woff2") format("woff2");
 }
 
-/* Trousdale reset — keeps h2/etc from UA-bolding Brunswick Regular */
+/* Trousdale reset — keeps h2/etc from UA-bolding */
 html,
 body,
 div,
@@ -45,9 +74,7 @@ main {
   --panel: rgba(16, 18, 28, 0.8);
   --cta: #d4d0f7;
   --hub-size: 20px; /* match circle satellite nodes */
-  --font: "Brunswick Grotesque";
-  --font-weight: 400;
-  --type-size: 13px;
+  --font: "Overpass Mono", ui-monospace, monospace;
 }
 
 html,
@@ -58,12 +85,9 @@ body {
   background: var(--paper);
   background-image: radial-gradient(ellipse 80% 55% at 50% 42%, #5b8cff 0%, var(--paper) 72%);
   color: var(--ink);
-  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: var(--font-weight);
+  font-family: var(--font);
   line-height: 1;
   -webkit-font-smoothing: antialiased;
-  /* Brunswick ss03 = Wide (calt off so widths don't randomize) */
-  font-feature-settings: "ss03" 1, "calt" 0;
 }
 
 button {
@@ -99,8 +123,8 @@ a:hover {
   justify-content: center;
   padding: 8px 20px calc(8px + env(safe-area-inset-bottom, 0px));
   background: transparent;
-  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: var(--type-size);
+  font-family: var(--font);
+  font-size: 13px;
   line-height: 1.35em;
   color: var(--fg);
 }
@@ -128,7 +152,7 @@ a:hover {
   display: flex;
   align-items: center;
   padding: 32px 24px;
-  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font);
   color: var(--fg);
 }
 
@@ -142,7 +166,7 @@ a:hover {
 
 .site-nav button,
 .site-nav a {
-  font-size: var(--type-size);
+  font-size: 13px;
   color: var(--fg);
   opacity: 0.6;
   text-decoration: none;
@@ -229,8 +253,8 @@ a:hover {
 .page-container {
   width: 420px;
   position: relative;
-  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: var(--type-size);
+  font-family: var(--font);
+  font-size: 13px;
   line-height: 1.45em;
   letter-spacing: -0.01em;
   pointer-events: all;
@@ -240,7 +264,7 @@ a:hover {
 @media (max-width: 768px) {
   .page-container {
     width: 100%;
-    font-size: var(--type-size);
+    font-size: 14px;
   }
 }
 
@@ -471,8 +495,8 @@ a:hover {
 }
 
 .tab-title {
-  font-family: var(--font), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: var(--type-size);
+  font-family: var(--font);
+  font-size: 14px;
   line-height: 1.45em;
   text-transform: capitalize;
 }
@@ -694,7 +718,7 @@ a:hover {
   border-radius: 999px;
   background: var(--ink);
   color: var(--fg);
-  font-size: var(--type-size);
+  font-size: 13px;
   text-transform: capitalize;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
@@ -728,46 +752,4 @@ a:hover {
 
 .index-link {
   text-decoration: underline;
-}
-
-.font-pick {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 18px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.font-pick-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.font-pick-name {
-  flex: 1;
-  min-width: 0;
-  color: var(--fg);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.font-pick button {
-  flex-shrink: 0;
-  padding: 8px 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.7);
-  border-radius: 999px;
-  color: var(--fg);
-  font: inherit;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.font-pick button.is-on {
-  background: #fff;
-  color: var(--ink);
-  border-style: solid;
 }
