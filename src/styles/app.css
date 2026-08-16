@@ -500,6 +500,8 @@ a:hover {
   font-size: 14px;
   line-height: 1.45em;
   text-transform: capitalize;
+  font-weight: 700;
+  margin-bottom: -3px;
 }
 
 .tab-title.is-version {
