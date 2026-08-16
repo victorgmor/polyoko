@@ -4,8 +4,8 @@ import { hubSvg } from "../lib/shapes";
 export const GET: APIRoute = () =>
   new Response(
     hubSvg().replace(
-      'viewBox="0 0 191.885 191.89"',
-      'viewBox="-56 -56 304 304"',
+      'viewBox="0 0 141.667 92.254"',
+      'viewBox="-24 -40 190 172"',
     ),
     { headers: { "Content-Type": "image/svg+xml; charset=utf-8" } },
   );

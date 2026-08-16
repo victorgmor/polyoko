@@ -166,7 +166,6 @@ a:hover {
   z-index: 0;
   pointer-events: none;
   opacity: 0.09;
-  filter: invert(1);
 }
 
 .bg-mark > div {
@@ -428,7 +427,7 @@ a:hover {
 
 .icon-home,
 .icon-page {
-  width: 19px;
+  width: 29px;
   height: 19px;
   display: block;
   flex-shrink: 0;
@@ -437,19 +436,10 @@ a:hover {
 .icon-home svg,
 .icon-page svg {
   display: block;
-  width: 19px;
+  width: 29px;
   height: 19px;
   overflow: visible;
   shape-rendering: geometricPrecision;
-}
-
-.icon-home svg {
-  filter: invert(1);
-}
-
-.icon-page svg {
-  fill: #fff;
-  color: #fff;
 }
 
 .tab-shape {
