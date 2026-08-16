@@ -688,6 +688,7 @@ a:hover {
   margin: 8px 0 0;
   padding: 0;
   list-style: none;
+  font-weight: 700;
 }
 
 .wishlist-rank li {
