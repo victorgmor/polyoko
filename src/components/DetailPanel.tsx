@@ -12,39 +12,102 @@ import {
   type MenuSection,
   type PageContent,
 } from "@/lib/menu";
-import { applyFont, PAGE_FONT, savedFont } from "@/lib/font";
+import {
+  applyFont,
+  applySize,
+  applyWeight,
+  PAGE_FONT,
+  savedBold,
+  savedFont,
+  savedSize,
+} from "@/lib/font";
 import { hubSvg, pageSvg } from "@/lib/shapes";
 
 function FontPick() {
-  const [fonts, setFonts] = useState<string[]>([]);
+  const [fonts, setFonts] = useState<string[]>([PAGE_FONT]);
   const [cur, setCur] = useState(PAGE_FONT);
+  const [bold, setBold] = useState(false);
+  const [size, setSize] = useState(13);
+  const fontsRef = useRef(fonts);
 
   useEffect(() => {
     setCur(savedFont());
+    setBold(savedBold());
+    setSize(savedSize());
     fetch("/google-fonts.json")
       .then((r) => r.json())
-      .then((list: string[]) => setFonts(list));
+      .then((list: string[]) => setFonts([PAGE_FONT, ...list]));
+  }, []);
+
+  useEffect(() => {
+    fontsRef.current = fonts;
+  }, [fonts]);
+
+  function step(dir: number) {
+    const list = fontsRef.current;
+    setCur((name) => {
+      const i = list.indexOf(name);
+      const next = list[((i < 0 ? 0 : i) + dir + list.length) % list.length];
+      applyFont(next);
+      return next;
+    });
+  }
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        step(-1);
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        step(1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   return (
-    <label className="font-pick">
-      Font
-      <input
-        list="google-fonts"
-        value={cur}
-        onChange={(e) => {
-          const name = e.target.value;
-          setCur(name);
-          if (name === PAGE_FONT || fonts.includes(name)) applyFont(name);
-        }}
-      />
-      <datalist id="google-fonts">
-        <option value={PAGE_FONT} />
-        {fonts.map((f) => (
-          <option key={f} value={f} />
-        ))}
-      </datalist>
-    </label>
+    <div className="font-pick">
+      <div className="font-pick-row">
+        <button type="button" aria-label="Previous font" onClick={() => step(-1)}>
+          ←
+        </button>
+        <span className="font-pick-name">{cur}</span>
+        <button type="button" aria-label="Next font" onClick={() => step(1)}>
+          →
+        </button>
+      </div>
+      <div className="font-pick-row">
+        <button
+          type="button"
+          className={bold ? "is-on" : undefined}
+          onClick={() => {
+            const next = !bold;
+            setBold(next);
+            applyWeight(next);
+          }}
+        >
+          Bold
+        </button>
+        <button
+          type="button"
+          aria-label="Smaller"
+          onClick={() => setSize((s) => applySize(s - 1))}
+        >
+          −
+        </button>
+        <span>{size}px</span>
+        <button
+          type="button"
+          aria-label="Larger"
+          onClick={() => setSize((s) => applySize(s + 1))}
+        >
+          +
+        </button>
+      </div>
+    </div>
   );
 }
 
