@@ -322,7 +322,7 @@ export default function DetailPanel({
                 {isHome ? "Plusmarket" : page.title}
               </span>
               {isHome ? (
-                <span className="tab-title panel-version">0.8.0-beta</span>
+                <span className="tab-title panel-version">v0.8.0-beta</span>
               ) : (
                 <button
                   type="button"

@@ -42,7 +42,7 @@ export const MENU_NODES: MenuNode[] = [
     body: "Release notes and product updates for Plusmarket.",
     sections: [
       {
-        heading: "0.8.0-beta",
+        heading: "v0.8.0-beta",
         items: [
           "Confirm fills at the live book (real fill size only)",
           "Live ask/bid prices, not stale quotes",
