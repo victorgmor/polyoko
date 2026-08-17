@@ -6,6 +6,10 @@ const WEIGHT = 2;
 const PROXIMITY = 16; // ponytail: 8 melts a laptop
 const SIZE = 10;
 const PAD = 18; // panel radius 15 + stroke, so ticks miss the corners
+const IN_L = 2 * PROXIMITY;
+const IN_T = 2 * PROXIMITY;
+const IN_R = PROXIMITY;
+const IN_B = PROXIMITY;
 
 type Hole = { l: number; t: number; r: number; b: number };
 
@@ -15,21 +19,25 @@ function walk(start: number, step: number, test: (v: number) => boolean) {
   return out;
 }
 
-function pointsAround(w: number, h: number, hole: Hole) {
-  const { l, t, r, b } = hole;
-  const xs = [...walk(l, -PROXIMITY, (x) => x >= -PROXIMITY), ...walk(l + PROXIMITY, PROXIMITY, (x) => x <= w + PROXIMITY)];
-  const ys = [...walk(t, -PROXIMITY, (y) => y >= -PROXIMITY), ...walk(t + PROXIMITY, PROXIMITY, (y) => y <= h + PROXIMITY)];
+function inHole(x: number, y: number, hole: Hole) {
+  return x >= hole.l && x <= hole.r && y >= hole.t && y <= hole.b;
+}
+
+function pointsAround(w: number, h: number, holes: Hole[]) {
+  const o = holes[0] ?? { l: 0, t: 0, r: 0, b: 0 };
+  const xs = [...walk(o.l, -PROXIMITY, (x) => x >= -PROXIMITY), ...walk(o.l + PROXIMITY, PROXIMITY, (x) => x <= w + PROXIMITY)];
+  const ys = [...walk(o.t, -PROXIMITY, (y) => y >= -PROXIMITY), ...walk(o.t + PROXIMITY, PROXIMITY, (y) => y <= h + PROXIMITY)];
   const pts: { x: number; y: number }[] = [];
   for (const y of ys) {
     for (const x of xs) {
-      if (x >= l && x <= r && y >= t && y <= b) continue;
+      if (holes.some((hole) => inHole(x, y, hole))) continue;
       pts.push({ x, y });
     }
   }
   return pts;
 }
 
-function clipEnd(x1: number, y1: number, x2: number, y2: number, hole: Hole) {
+function clipOne(x1: number, y1: number, x2: number, y2: number, hole: Hole) {
   const { l, t, r, b } = hole;
   if (x2 < l || x2 > r || y2 < t || y2 > b) return { x: x2, y: y2 };
   const dx = x2 - x1;
@@ -45,6 +53,12 @@ function clipEnd(x1: number, y1: number, x2: number, y2: number, hole: Hole) {
   return { x: x1 + best * dx, y: y1 + best * dy };
 }
 
+function clipEnd(x1: number, y1: number, x2: number, y2: number, holes: Hole[]) {
+  let end = { x: x2, y: y2 };
+  for (const hole of holes) end = clipOne(x1, y1, end.x, end.y, hole);
+  return end;
+}
+
 export default function BgHole() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -56,9 +70,9 @@ export default function BgHole() {
 
     const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
     let pts: { x: number; y: number }[] = [];
-    let hole: Hole = { l: 0, t: 0, r: 0, b: 0 };
+    let holes: Hole[] = [];
     let key = "";
-    let watched: Element | null = null;
+    const watched = new Set<Element>();
     let raf = 0;
     const freeze = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -74,25 +88,38 @@ export default function BgHole() {
         canvas.height = innerHeight;
         key = "";
       }
-      const el = document.querySelector(".page-stack");
-      if (el !== watched) {
-        if (watched) ro.unobserve(watched);
-        if (el) ro.observe(el);
-        watched = el;
+      const panel = document.querySelector(".page-stack");
+      const nav = document.querySelector(".site-nav");
+      for (const el of [panel, nav]) {
+        if (el && !watched.has(el)) {
+          ro.observe(el);
+          watched.add(el);
+        }
       }
-      const box = el?.getBoundingClientRect();
-      const next = box
-        ? `${innerWidth}x${innerHeight}:${Math.round(box.left)}:${Math.round(box.top)}:${Math.round(box.width)}:${Math.round(box.height)}`
-        : `${innerWidth}x${innerHeight}`;
+      const box = panel?.getBoundingClientRect();
+      const navBox = nav?.getBoundingClientRect();
+      const next = `${innerWidth}x${innerHeight}:${box ? `${Math.round(box.left)}:${Math.round(box.top)}:${Math.round(box.width)}:${Math.round(box.height)}` : ""}:${navBox ? `${Math.round(navBox.left)}:${Math.round(navBox.top)}:${Math.round(navBox.width)}:${Math.round(navBox.height)}` : ""}`;
       if (next === key && pts.length) return;
       key = next;
+      holes = [];
       if (box && box.width > 8) {
-        hole = { l: box.left - PAD, t: box.top - PAD, r: box.right + PAD, b: box.bottom + PAD };
-        pts = pointsAround(canvas.width, canvas.height, hole);
-      } else {
-        hole = { l: 0, t: 0, r: 0, b: 0 };
-        pts = [];
+        holes.push({
+          l: box.left - PAD + IN_L,
+          t: box.top - PAD + IN_T,
+          r: box.right + PAD - IN_R,
+          b: box.bottom + PAD - IN_B,
+        });
       }
+      if (navBox && navBox.width > 8) {
+        const row = 2 * PROXIMITY;
+        holes.push({
+          l: navBox.left,
+          t: navBox.top - row,
+          r: navBox.right,
+          b: navBox.bottom + row,
+        });
+      }
+      pts = holes.length ? pointsAround(canvas.width, canvas.height, holes) : [];
     };
 
     const heading = (x: number, y: number) => Math.atan2(-x - y, y - x);
@@ -105,7 +132,7 @@ export default function BgHole() {
       ctx.lineCap = "round";
       for (const p of pts) {
         const a = heading(p.x - mouse.x, p.y - mouse.y);
-        const end = clipEnd(p.x, p.y, p.x + SIZE * Math.cos(a), p.y + SIZE * Math.sin(a), hole);
+        const end = clipEnd(p.x, p.y, p.x + SIZE * Math.cos(a), p.y + SIZE * Math.sin(a), holes);
         if ((end.x - p.x) ** 2 + (end.y - p.y) ** 2 < 1) continue;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
