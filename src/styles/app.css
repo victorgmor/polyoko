@@ -424,6 +424,10 @@ a:hover {
   font-weight: 300;
 }
 
+.panel-back::after {
+  font-weight: 700;
+}
+
 .panel-back:hover {
   opacity: 0.55;
 }
