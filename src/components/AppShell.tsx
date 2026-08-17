@@ -61,7 +61,6 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
           )}
         </nav>
       </header>
-      <div className="bg-mark" aria-hidden />
       <div className="topbar">
         <a
           className="powered-by"

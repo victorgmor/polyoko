@@ -189,17 +189,6 @@ a:hover {
   }
 }
 
-.bg-mark {
-  position: fixed;
-  inset: -25%;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.08;
-  background: url("/img/bg-mark.svg") repeat;
-  background-size: 13rem auto;
-  transform: rotate(-18deg);
-}
-
 /* —— info panel —— */
 .page {
   position: fixed;
