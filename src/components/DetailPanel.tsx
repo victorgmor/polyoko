@@ -115,8 +115,8 @@ function WishlistRank() {
       .catch(() => setRows([]));
   }, []);
 
-  if (rows == null) return <p>Loading…</p>;
-  if (!rows.length) return <p>No votes yet.</p>;
+  if (rows == null) return <p className="wishlist-rank">Loading…</p>;
+  if (!rows.length) return <p className="wishlist-rank">No votes yet.</p>;
 
   return (
     <ol className="wishlist-rank">
@@ -322,7 +322,7 @@ export default function DetailPanel({
                 {isHome ? "Plusmarket" : page.title}
               </span>
               {isHome ? (
-                <span className="tab-title panel-version">v0.3</span>
+                <span className="tab-title panel-version">0.8.0-beta</span>
               ) : (
                 <button
                   type="button"
