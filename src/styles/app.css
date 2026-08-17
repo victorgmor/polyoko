@@ -697,6 +697,7 @@ a:hover {
   background: var(--ink);
   color: var(--fg);
   font-size: 13px;
+  font-weight: 700;
   text-transform: capitalize;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
