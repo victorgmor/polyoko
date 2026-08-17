@@ -1,88 +1,136 @@
 import { useEffect, useRef } from "react";
-
-const RINGS = 20;
-const SEG = 24;
-const DEG = Math.PI / 180;
-const PAPER = "rgba(47, 98, 255, 0.2)";
-
-function rx(x: number, y: number, z: number, a: number) {
-  const c = Math.cos(a), s = Math.sin(a);
-  return [x, y * c - z * s, y * s + z * c] as const;
-}
-function ry(x: number, y: number, z: number, a: number) {
-  const c = Math.cos(a), s = Math.sin(a);
-  return [x * c + z * s, y, -x * s + z * c] as const;
-}
-function rz(x: number, y: number, z: number, a: number) {
-  const c = Math.cos(a), s = Math.sin(a);
-  return [x * c - y * s, x * s + y * c, z] as const;
-}
-function apply(p: readonly [number, number, number], rot: [number, number, number]) {
-  let [x, y, z] = rz(p[0], p[1], p[2], rot[2]);
-  [x, y, z] = ry(x, y, z, rot[1]);
-  return rx(x, y, z, rot[0]);
-}
+import * as THREE from "three";
 
 export default function BgHole() {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const host = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = host.current;
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let raf = 0;
-    const spin = new Array(RINGS).fill(0);
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x2f62ff);
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
+    camera.position.set(0, 4, 21);
+    const renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    el.appendChild(renderer.domElement);
 
-    const resize = () => {
-      const dpr = Math.min(devicePixelRatio, 2);
-      canvas.width = innerWidth * dpr;
-      canvas.height = innerHeight * dpr;
+    const gu = { time: { value: 0 } };
+    const sizes: number[] = [];
+    const shift: number[] = [];
+    const pts: THREE.Vector3[] = [];
+    const pushShift = () => {
+      shift.push(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI * 2,
+        (Math.random() * 0.9 + 0.1) * Math.PI * 0.1,
+        Math.random() * 0.9 + 0.1,
+      );
     };
-    resize();
-    addEventListener("resize", resize);
+    // ponytail: 40k points, original was 150k
+    for (let i = 0; i < 12000; i++) {
+      sizes.push(Math.random() * 1.5 + 0.5);
+      pushShift();
+      pts.push(new THREE.Vector3().randomDirection().multiplyScalar(Math.random() * 0.5 + 9.5));
+    }
+    for (let i = 0; i < 28000; i++) {
+      const r = 10, R = 40;
+      const rand = Math.pow(Math.random(), 1.5);
+      const radius = Math.sqrt(R * R * rand + (1 - rand) * r * r);
+      pts.push(
+        new THREE.Vector3().setFromCylindricalCoords(
+          radius,
+          Math.random() * 2 * Math.PI,
+          (Math.random() - 0.5) * 2,
+        ),
+      );
+      sizes.push(Math.random() * 1.5 + 0.5);
+      pushShift();
+    }
 
-    const frame = () => {
-      const w = canvas.width;
-      const h = canvas.height;
-      const zoom = Math.min(w, h) / 900;
-      ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = PAPER;
-      ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineWidth = 1.6 * Math.min(devicePixelRatio, 2);
+    const g = new THREE.BufferGeometry().setFromPoints(pts);
+    g.setAttribute("sizes", new THREE.Float32BufferAttribute(sizes, 1));
+    g.setAttribute("shift", new THREE.Float32BufferAttribute(shift, 4));
+    const m = new THREE.PointsMaterial({
+      size: 0.125,
+      transparent: true,
+      depthTest: false,
+      blending: THREE.AdditiveBlending,
+      onBeforeCompile: (shader) => {
+        shader.uniforms.time = gu.time;
+        shader.vertexShader = `
+          uniform float time;
+          attribute float sizes;
+          attribute vec4 shift;
+          varying vec3 vColor;
+          #define PI2 6.28318530718
+          ${shader.vertexShader}
+        `
+          .replace(`gl_PointSize = size;`, `gl_PointSize = size * sizes;`)
+          .replace(
+            `#include <color_vertex>`,
+            `#include <color_vertex>
+              float d = length(abs(position) / vec3(40., 10., 40));
+              d = clamp(d, 0., 1.);
+              vColor = mix(vec3(210., 230., 255.), vec3(47., 98., 255.), d) / 255.;
+            `,
+          )
+          .replace(
+            `#include <begin_vertex>`,
+            `#include <begin_vertex>
+              float t = time;
+              float moveT = mod(shift.x + shift.z * t, PI2);
+              float moveS = mod(shift.y + shift.z * t, PI2);
+              transformed += vec3(cos(moveS) * sin(moveT), cos(moveT), sin(moveS) * sin(moveT)) * shift.w;
+            `,
+          );
+        shader.fragmentShader = `
+          varying vec3 vColor;
+          ${shader.fragmentShader}
+        `
+          .replace(
+            `#include <clipping_planes_fragment>`,
+            `#include <clipping_planes_fragment>
+              float d = length(gl_PointCoord.xy - 0.5);
+            `,
+          )
+          .replace(
+            `vec4 diffuseColor = vec4( diffuse, opacity );`,
+            `vec4 diffuseColor = vec4( vColor, smoothstep(0.5, 0.1, d) );`,
+          );
+      },
+    });
+    const p = new THREE.Points(g, m);
+    p.rotation.order = "ZYX";
+    p.rotation.z = 0.2;
+    scene.add(p);
 
-      for (let i = 0; i < RINGS; i++) {
-        const frac = i / (RINGS - 1);
-        const scale = frac * 300 + 1;
-        const tilt = (((1 - frac) * -45) + 65) * DEG;
-        spin[i] += (RINGS - i) * 0.2 * DEG;
-        const rot: [number, number, number] = [spin[i], tilt, 0.6 * tilt];
-        const origin = apply([-250 + (1 - frac) * 700, 0, 0], rot);
-
-        ctx.beginPath();
-        for (let s = 0; s <= SEG; s++) {
-          const a = (s / SEG) * Math.PI * 2;
-          let p = apply([Math.cos(a) * scale, Math.sin(a) * scale, 0], rot);
-          p = [p[0] + origin[0], p[1] + origin[1], p[2] + origin[2]];
-          const f = 420 / (420 + p[2]);
-          const x = w / 2 + p[0] * f * zoom;
-          const y = h / 2 + p[1] * f * zoom;
-          s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = `hsla(224, 100%, 48%, ${0.12 + frac * 0.5})`;
-        ctx.stroke();
-      }
-      raf = requestAnimationFrame(frame);
+    const clock = new THREE.Clock();
+    const onResize = () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
     };
-    raf = requestAnimationFrame(frame);
+    addEventListener("resize", onResize);
+
+    renderer.setAnimationLoop(() => {
+      const t = clock.getElapsedTime() * 0.5;
+      gu.time.value = t * Math.PI;
+      p.rotation.y = t * 0.05;
+      renderer.render(scene, camera);
+    });
+
     return () => {
-      cancelAnimationFrame(raf);
-      removeEventListener("resize", resize);
+      renderer.setAnimationLoop(null);
+      removeEventListener("resize", onResize);
+      g.dispose();
+      m.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
     };
   }, []);
 
-  return <canvas className="bg-hole" ref={ref} aria-hidden />;
+  return <div className="bg-hole" ref={host} aria-hidden />;
 }
