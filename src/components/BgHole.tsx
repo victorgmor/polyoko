@@ -5,6 +5,50 @@ const LINE = "rgba(255,255,255,0.7)";
 const WEIGHT = 2;
 const PROXIMITY = 16; // ponytail: 8 melts a laptop
 const SIZE = 10;
+const PAD = 4;
+
+type Hole = { l: number; t: number; r: number; b: number };
+
+function walk(start: number, step: number, test: (v: number) => boolean) {
+  const out: number[] = [];
+  for (let v = start; test(v); v += step) out.push(v);
+  return out;
+}
+
+function pointsAround(w: number, h: number, hole: Hole) {
+  const { l, t, r, b } = hole;
+  const xsL = walk(l, -PROXIMITY, (x) => x >= -PROXIMITY);
+  const xsM = walk(l + PROXIMITY, PROXIMITY, (x) => x < r);
+  const xsR = walk(r, PROXIMITY, (x) => x <= w + PROXIMITY);
+  const ysT = walk(t, -PROXIMITY, (y) => y >= -PROXIMITY);
+  const ysM = walk(t + PROXIMITY, PROXIMITY, (y) => y < b);
+  const ysB = walk(b, PROXIMITY, (y) => y <= h + PROXIMITY);
+  const xsAll = [...xsL, ...xsM, ...xsR];
+  const pts: { x: number; y: number }[] = [];
+  for (const y of ysT) for (const x of xsAll) pts.push({ x, y });
+  for (const y of ysB) for (const x of xsAll) pts.push({ x, y });
+  for (const y of ysM) {
+    for (const x of xsL) pts.push({ x, y });
+    for (const x of xsR) pts.push({ x, y });
+  }
+  return pts;
+}
+
+function clipEnd(x1: number, y1: number, x2: number, y2: number, hole: Hole) {
+  const { l, t, r, b } = hole;
+  if (x2 < l || x2 > r || y2 < t || y2 > b) return { x: x2, y: y2 };
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  let best = 1;
+  const hits = [dx ? (l - x1) / dx : 2, dx ? (r - x1) / dx : 2, dy ? (t - y1) / dy : 2, dy ? (b - y1) / dy : 2];
+  for (const u of hits) {
+    if (u <= 0 || u >= best) continue;
+    const x = x1 + u * dx;
+    const y = y1 + u * dy;
+    if (x >= l - 0.6 && x <= r + 0.6 && y >= t - 0.6 && y <= b + 0.6) best = u;
+  }
+  return { x: x1 + best * dx, y: y1 + best * dy };
+}
 
 export default function BgHole() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,34 +61,60 @@ export default function BgHole() {
 
     const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
     let pts: { x: number; y: number }[] = [];
+    let hole: Hole = { l: 0, t: 0, r: 0, b: 0 };
+    let key = "";
+    let watched: Element | null = null;
     let raf = 0;
     const freeze = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const init = () => {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-      pts = [];
-      const cols = Math.ceil(canvas.width / PROXIMITY) + 1;
-      const rows = Math.ceil(canvas.height / PROXIMITY) + 1;
-      for (let j = 0; j < rows; j++) {
-        for (let i = 0; i < cols; i++) {
-          pts.push({ x: PROXIMITY * i, y: PROXIMITY * j });
-        }
+    const ro = new ResizeObserver(() => {
+      key = "";
+      layout();
+      if (freeze) draw();
+    });
+
+    const layout = () => {
+      if (canvas.width !== innerWidth || canvas.height !== innerHeight) {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+        key = "";
+      }
+      const el = document.querySelector(".page-stack");
+      if (el !== watched) {
+        if (watched) ro.unobserve(watched);
+        if (el) ro.observe(el);
+        watched = el;
+      }
+      const box = el?.getBoundingClientRect();
+      const next = box
+        ? `${innerWidth}x${innerHeight}:${Math.round(box.left)}:${Math.round(box.top)}:${Math.round(box.width)}:${Math.round(box.height)}`
+        : `${innerWidth}x${innerHeight}`;
+      if (next === key && pts.length) return;
+      key = next;
+      if (box && box.width > 8) {
+        hole = { l: box.left - PAD, t: box.top - PAD, r: box.right + PAD, b: box.bottom + PAD };
+        pts = pointsAround(canvas.width, canvas.height, hole);
+      } else {
+        hole = { l: 0, t: 0, r: 0, b: 0 };
+        pts = [];
       }
     };
 
     const heading = (x: number, y: number) => Math.atan2(-x - y, y - x);
 
     const draw = () => {
+      layout();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = LINE;
       ctx.lineWidth = WEIGHT;
       ctx.lineCap = "round";
       for (const p of pts) {
         const a = heading(p.x - mouse.x, p.y - mouse.y);
+        const end = clipEnd(p.x, p.y, p.x + SIZE * Math.cos(a), p.y + SIZE * Math.sin(a), hole);
+        if ((end.x - p.x) ** 2 + (end.y - p.y) ** 2 < 1) continue;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p.x + SIZE * Math.cos(a), p.y + SIZE * Math.sin(a));
+        ctx.lineTo(end.x, end.y);
         ctx.stroke();
       }
     };
@@ -54,7 +124,7 @@ export default function BgHole() {
       raf = requestAnimationFrame(tick);
     };
 
-    init();
+    layout();
     if (freeze) draw();
     else raf = requestAnimationFrame(tick);
 
@@ -63,11 +133,12 @@ export default function BgHole() {
       mouse.y = e.clientY;
     };
     addEventListener("mousemove", onMove);
-    addEventListener("resize", init);
+    addEventListener("resize", layout);
     return () => {
       cancelAnimationFrame(raf);
+      ro.disconnect();
       removeEventListener("mousemove", onMove);
-      removeEventListener("resize", init);
+      removeEventListener("resize", layout);
     };
   }, []);
 
