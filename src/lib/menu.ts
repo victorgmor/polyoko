@@ -42,7 +42,7 @@ export const MENU_NODES: MenuNode[] = [
     body: "Release notes and product updates for Plusmarket.",
     sections: [
       {
-        heading: "v0.3 — Live book and share",
+        heading: "0.8.0-beta",
         items: [
           "Confirm fills at the live book (real fill size only)",
           "Live ask/bid prices, not stale quotes",
@@ -58,7 +58,7 @@ export const MENU_NODES: MenuNode[] = [
         ],
       },
       {
-        heading: "v0.2 — Full money loop",
+        heading: "v0.7.0-alpha",
         items: [
           "Auto-wrap USDC → pUSD (/wrap)",
           "Withdraw as USDC or POL",
@@ -72,7 +72,7 @@ export const MENU_NODES: MenuNode[] = [
         ],
       },
       {
-        heading: "v0.1 — Trade from Telegram",
+        heading: "v0.6.0-alpha",
         items: [
           "Encrypted wallet create / import / export",
           "Deposit USDC on Polygon",
