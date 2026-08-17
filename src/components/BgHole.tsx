@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 
 // 21st.dev/@designali-in/components/vector-field
 const LINE = "rgba(255,255,255,0.7)";
+const WEIGHT = 2;
 const PROXIMITY = 16; // ponytail: 8 melts a laptop
-const ICON = 14;
-const MARK_D =
-  "M18 7.36981C16.7435 5.91657 14.9052 5 12.8571 5C9.07005 5 6 8.13401 6 12C6 15.866 9.07005 19 12.8571 19C14.9052 19 16.7435 18.0834 18 16.6302M13 5V3M13 21V19";
+const SIZE = 10;
 const PAD = 18; // panel radius 15 + stroke, so ticks miss the corners
 const IN_L = 2 * PROXIMITY;
 const IN_T = 2 * PROXIMITY;
@@ -38,6 +37,28 @@ function pointsAround(w: number, h: number, holes: Hole[]) {
   return pts;
 }
 
+function clipOne(x1: number, y1: number, x2: number, y2: number, hole: Hole) {
+  const { l, t, r, b } = hole;
+  if (x2 < l || x2 > r || y2 < t || y2 > b) return { x: x2, y: y2 };
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  let best = 1;
+  const hits = [dx ? (l - x1) / dx : 2, dx ? (r - x1) / dx : 2, dy ? (t - y1) / dy : 2, dy ? (b - y1) / dy : 2];
+  for (const u of hits) {
+    if (u <= 0 || u >= best) continue;
+    const x = x1 + u * dx;
+    const y = y1 + u * dy;
+    if (x >= l - 0.6 && x <= r + 0.6 && y >= t - 0.6 && y <= b + 0.6) best = u;
+  }
+  return { x: x1 + best * dx, y: y1 + best * dy };
+}
+
+function clipEnd(x1: number, y1: number, x2: number, y2: number, holes: Hole[]) {
+  let end = { x: x2, y: y2 };
+  for (const hole of holes) end = clipOne(x1, y1, end.x, end.y, hole);
+  return end;
+}
+
 export default function BgHole() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -46,7 +67,6 @@ export default function BgHole() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const mark = new Path2D(MARK_D);
 
     const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
     let pts: { x: number; y: number }[] = [];
@@ -102,27 +122,22 @@ export default function BgHole() {
       pts = holes.length ? pointsAround(canvas.width, canvas.height, holes) : [];
     };
 
+    const heading = (x: number, y: number) => Math.atan2(-x - y, y - x);
+
     const draw = () => {
       layout();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = LINE;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = WEIGHT;
       ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      const s = ICON / 24;
       for (const p of pts) {
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const vx = dy - dx;
-        const len = Math.hypot(vx, -dx - dy) || 1;
-        const sx = vx / len; // XZ flip (around Y), not XY spin
-        if (Math.abs(sx) < 0.06) continue;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.scale(s * sx, s);
-        ctx.translate(-12, -12);
-        ctx.stroke(mark);
-        ctx.restore();
+        const a = heading(p.x - mouse.x, p.y - mouse.y);
+        const end = clipEnd(p.x, p.y, p.x + SIZE * Math.cos(a), p.y + SIZE * Math.sin(a), holes);
+        if ((end.x - p.x) ** 2 + (end.y - p.y) ** 2 < 1) continue;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
       }
     };
 
