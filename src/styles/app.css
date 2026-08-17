@@ -688,15 +688,15 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 13px 14px 9px;
+  gap: 10px;
+  padding: 18px 16px 14px;
   text-align: center;
   text-decoration: none;
   border: 1px solid transparent;
   border-radius: 999px;
   background: var(--ink);
   color: var(--fg);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   text-transform: capitalize;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
@@ -710,7 +710,7 @@ a:hover {
 }
 
 .launch-btn-icon-tg {
-  width: 18px;
+  width: 22px;
   height: auto;
   transform: translateY(-2px);
 }
