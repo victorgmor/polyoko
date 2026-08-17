@@ -17,19 +17,14 @@ function walk(start: number, step: number, test: (v: number) => boolean) {
 
 function pointsAround(w: number, h: number, hole: Hole) {
   const { l, t, r, b } = hole;
-  const xsL = walk(l - PROXIMITY, -PROXIMITY, (x) => x >= -PROXIMITY);
-  const xsM = walk(l + PROXIMITY, PROXIMITY, (x) => x < r);
-  const xsR = walk(r + PROXIMITY, PROXIMITY, (x) => x <= w + PROXIMITY);
-  const ysT = walk(t - PROXIMITY, -PROXIMITY, (y) => y >= -PROXIMITY);
-  const ysM = walk(t + PROXIMITY, PROXIMITY, (y) => y < b);
-  const ysB = walk(b + PROXIMITY, PROXIMITY, (y) => y <= h + PROXIMITY);
-  const xsAll = [...xsL, ...xsM, ...xsR];
+  const xs = [...walk(l, -PROXIMITY, (x) => x >= -PROXIMITY), ...walk(l + PROXIMITY, PROXIMITY, (x) => x <= w + PROXIMITY)];
+  const ys = [...walk(t, -PROXIMITY, (y) => y >= -PROXIMITY), ...walk(t + PROXIMITY, PROXIMITY, (y) => y <= h + PROXIMITY)];
   const pts: { x: number; y: number }[] = [];
-  for (const y of ysT) for (const x of xsAll) pts.push({ x, y });
-  for (const y of ysB) for (const x of xsAll) pts.push({ x, y });
-  for (const y of ysM) {
-    for (const x of xsL) pts.push({ x, y });
-    for (const x of xsR) pts.push({ x, y });
+  for (const y of ys) {
+    for (const x of xs) {
+      if (x >= l && x <= r && y >= t && y <= b) continue;
+      pts.push({ x, y });
+    }
   }
   return pts;
 }
