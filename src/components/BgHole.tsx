@@ -92,11 +92,17 @@ export default function BgHole() {
     });
 
     const layout = () => {
-      if (canvas.width !== innerWidth || canvas.height !== innerHeight) {
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
+      const dpr = Math.min(devicePixelRatio || 1, 3);
+      const w = innerWidth;
+      const h = innerHeight;
+      const bw = Math.round(w * dpr);
+      const bh = Math.round(h * dpr);
+      if (canvas.width !== bw || canvas.height !== bh) {
+        canvas.width = bw;
+        canvas.height = bh;
         key = "";
       }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const panel = document.querySelector(".page-stack");
       const nav = document.querySelector(".site-nav");
       const foot = document.querySelector(".powered-by");
@@ -125,14 +131,14 @@ export default function BgHole() {
       if (navHole) holes.push(navHole);
       const footHole = holeFrom(foot);
       if (footHole) holes.push(footHole);
-      pts = holes.length ? pointsAround(canvas.width, canvas.height, holes) : [];
+      pts = holes.length ? pointsAround(w, h, holes) : [];
     };
 
     const heading = (x: number, y: number) => Math.atan2(-x - y, y - x);
 
     const draw = () => {
       layout();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
       ctx.strokeStyle = LINE;
       ctx.lineWidth = WEIGHT;
       ctx.lineCap = "round";
