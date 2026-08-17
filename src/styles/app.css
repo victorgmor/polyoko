@@ -134,6 +134,7 @@ a:hover {
   align-items: center;
   gap: 6px;
   color: var(--fg);
+  font-weight: 700;
 }
 
 .powered-by svg {
@@ -190,29 +191,13 @@ a:hover {
 
 .bg-mark {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  inset: -25%;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.09;
-}
-
-.bg-mark > div {
-  position: absolute;
-  width: 68rem;
-  height: 68rem;
-  margin: -34rem 0 0 -34rem;
-}
-
-.bg-mark > div:nth-child(1) { top: -68rem; left: 0; }
-.bg-mark > div:nth-child(2) { top: 0; left: -68rem; }
-.bg-mark > div:nth-child(3) { top: 0; left: 68rem; }
-.bg-mark > div:nth-child(4) { top: 68rem; left: 0; }
-
-.bg-mark svg {
-  display: block;
-  width: 100%;
-  height: 100%;
+  opacity: 0.08;
+  background: url("/img/bg-mark.svg") repeat;
+  background-size: 13rem auto;
+  transform: rotate(-18deg);
 }
 
 /* —— info panel —— */

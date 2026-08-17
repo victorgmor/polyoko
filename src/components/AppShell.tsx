@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import DetailPanel from "./DetailPanel";
 import { getPage, MENU_NODES } from "@/lib/menu";
-import { hubSvg } from "@/lib/shapes";
-
 function pathToPageId(pathname: string): string {
   const id = pathname === "/" ? "/" : pathname.replace(/^\//, "");
   return getPage(id) ? id : "/";
@@ -63,11 +61,7 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
           )}
         </nav>
       </header>
-      <div className="bg-mark" aria-hidden>
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} dangerouslySetInnerHTML={{ __html: hubSvg() }} />
-        ))}
-      </div>
+      <div className="bg-mark" aria-hidden />
       <div className="topbar">
         <a
           className="powered-by"
