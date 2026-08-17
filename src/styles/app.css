@@ -734,6 +734,12 @@ a:hover {
   display: block;
 }
 
+.launch-btn-icon-tg {
+  width: 18px;
+  height: auto;
+  transform: translateY(-2px);
+}
+
 .page-container a.launch-btn:hover {
   background: #fff;
   color: var(--ink);
