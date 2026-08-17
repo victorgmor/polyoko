@@ -34,20 +34,27 @@ uniform sampler2D uTexture;
 uniform float uTextureWidth;
 uniform float uSequenceWidth;
 uniform float uBandHeight;
+uniform float uTexHeight;
 uniform float uScroll;
 uniform float uSpeed;
 uniform float uOffsetY;
 varying vec2 vUv;
 
 void main() {
-  vec2 pixelCoord = vUv * uResolution;
+  vec2 p = vUv - 0.5;
+  p.x *= uResolution.x / uResolution.y;
+  p /= (1.0 + 0.75 * dot(p, p));
+  p.x /= uResolution.x / uResolution.y;
+  vec2 pixelCoord = (p + 0.5) * uResolution;
+
+  float scale = uBandHeight / uTexHeight;
   float bandTop = (uResolution.y - uBandHeight) * 0.5 + uOffsetY;
   float bandBottom = bandTop + uBandHeight;
-  float margin = 3.0;
+  float margin = 3.0 * scale;
   if (pixelCoord.y < bandTop - margin || pixelCoord.y > bandBottom + margin) discard;
 
-  float textureX = (mod(pixelCoord.x + uScroll * uSpeed, uSequenceWidth) + uSequenceWidth) / uTextureWidth;
-  float texY = (pixelCoord.y - bandTop) / (bandBottom - bandTop);
+  float textureX = (mod(pixelCoord.x / scale + uScroll * uSpeed, uSequenceWidth) + uSequenceWidth) / uTextureWidth;
+  float texY = (pixelCoord.y - bandTop) / uBandHeight;
   if (textureX < 0.0 || textureX > 1.0 || texY < 0.0 || texY > 1.0) discard;
 
   vec4 color = texture2D(uTexture, vec2(textureX, texY));
@@ -175,6 +182,7 @@ export default function BgHole() {
             uTextureWidth: { value: total },
             uSequenceWidth: { value: seq },
             uBandHeight: { value: 0 },
+            uTexHeight: { value: BAND_H },
             uScroll: { value: 0 },
             uSpeed: { value: cfg.speed },
             uOffsetY: { value: 0 },
