@@ -5,7 +5,7 @@ const LINE = "rgba(255,255,255,0.7)";
 const WEIGHT = 2;
 const PROXIMITY = 16; // ponytail: 8 melts a laptop
 const SIZE = 10;
-const PAD = 4;
+const PAD = 18; // panel radius 15 + stroke, so ticks miss the corners
 
 type Hole = { l: number; t: number; r: number; b: number };
 
@@ -17,12 +17,12 @@ function walk(start: number, step: number, test: (v: number) => boolean) {
 
 function pointsAround(w: number, h: number, hole: Hole) {
   const { l, t, r, b } = hole;
-  const xsL = walk(l, -PROXIMITY, (x) => x >= -PROXIMITY);
+  const xsL = walk(l - PROXIMITY, -PROXIMITY, (x) => x >= -PROXIMITY);
   const xsM = walk(l + PROXIMITY, PROXIMITY, (x) => x < r);
-  const xsR = walk(r, PROXIMITY, (x) => x <= w + PROXIMITY);
-  const ysT = walk(t, -PROXIMITY, (y) => y >= -PROXIMITY);
+  const xsR = walk(r + PROXIMITY, PROXIMITY, (x) => x <= w + PROXIMITY);
+  const ysT = walk(t - PROXIMITY, -PROXIMITY, (y) => y >= -PROXIMITY);
   const ysM = walk(t + PROXIMITY, PROXIMITY, (y) => y < b);
-  const ysB = walk(b, PROXIMITY, (y) => y <= h + PROXIMITY);
+  const ysB = walk(b + PROXIMITY, PROXIMITY, (y) => y <= h + PROXIMITY);
   const xsAll = [...xsL, ...xsM, ...xsR];
   const pts: { x: number; y: number }[] = [];
   for (const y of ysT) for (const x of xsAll) pts.push({ x, y });
