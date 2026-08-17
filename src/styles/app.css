@@ -70,8 +70,8 @@ main {
 :root {
   --ink: #0B0C10;
   --fg: #fff;
-  --paper: #2f62ff;
-  --panel: #10121c;
+  --paper: #1133ff;
+  --panel: rgba(16, 18, 28, 0.92);
   --cta: #d4d0f7;
   --hub-size: 20px; /* match circle satellite nodes */
   --font: "Overpass Mono", ui-monospace, monospace;
@@ -163,7 +163,7 @@ a:hover {
   left: 50%;
   display: flex;
   gap: 22px;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-1px);
 }
 
 .site-nav button,
@@ -262,16 +262,35 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: var(--panel);
+  background: linear-gradient(180deg, rgba(16, 18, 28, 0.96), rgba(16, 18, 28, 0.88));
   border-radius: 15px;
   overflow: hidden;
 }
 
 .panel-heading {
+  position: relative;
   background: transparent;
   border-radius: 0;
   padding: 14px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* 1px border on a flex-centered panel lands on a half-pixel when height is odd → looks 2px */
+.panel-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+  transform-origin: bottom;
+}
+
+@media (min-resolution: 2dppx) {
+  .panel-heading::after {
+    transform: scaleY(0.5);
+  }
 }
 
 .panel-heading .tab-titles {
