@@ -71,7 +71,7 @@ main {
   --ink: #0B0C10;
   --fg: #fff;
   --paper: #2f62ff;
-  --panel: rgba(16, 18, 28, 0.48);
+  --panel: rgba(16, 18, 28, 0.28);
   --cta: #d4d0f7;
   --hub-size: 20px; /* match circle satellite nodes */
   --font: "Overpass Mono", ui-monospace, monospace;
@@ -262,8 +262,6 @@ a:hover {
   flex-direction: column;
   gap: 0;
   background: var(--panel);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-radius: 15px;
   overflow: hidden;
 }

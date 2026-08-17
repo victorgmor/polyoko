@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // 21st.dev/@designali-in/components/vector-field
-const LINE = "rgba(255,255,255,0.45)";
+const LINE = "rgba(255,255,255,0.7)";
 const WEIGHT = 2;
 const PROXIMITY = 16; // ponytail: 8 melts a laptop
 const SIZE = 10;
