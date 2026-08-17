@@ -9,14 +9,14 @@ const CLONES = 3;
 const IMAGES = Array.from({ length: 32 }, (_, i) => `/img/markets/${String(i).padStart(2, "0")}.jpg`);
 
 const BANDS = [
-  { speed: 1.0, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
-  { speed: 1.3, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 35 },
-  { speed: 1.6, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
-  { speed: 0.7, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { speed: 0.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { speed: 1.2, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { speed: 0.8, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { speed: 1.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { speed: 1.0 },
+  { speed: 1.3 },
+  { speed: 1.6 },
+  { speed: 0.7 },
+  { speed: 0.4 },
+  { speed: 1.2 },
+  { speed: 0.8 },
+  { speed: 1.4 },
 ];
 
 const VERT = `
@@ -37,51 +37,16 @@ uniform float uBandHeight;
 uniform float uScroll;
 uniform float uSpeed;
 uniform float uOffsetY;
-uniform float uRotation;
-uniform float uRotationType;
-uniform float uCurveAmount;
 varying vec2 vUv;
-
-mat2 rotate2d(float a) {
-  return mat2(cos(a), -sin(a), sin(a), cos(a));
-}
 
 void main() {
   vec2 pixelCoord = vUv * uResolution;
-  vec2 originalPixelCoord = pixelCoord;
-
-  float normalizedX = pixelCoord.x / uResolution.x;
-  float curveFactor = 4.0 * (normalizedX - 0.5) * (normalizedX - 0.5);
-  float curveOffset = (0.5 - curveFactor) * uCurveAmount;
-
-  float bandTopBase = (uResolution.y - uBandHeight) * 0.5 + uOffsetY;
-  float bandTop = bandTopBase + curveOffset;
+  float bandTop = (uResolution.y - uBandHeight) * 0.5 + uOffsetY;
   float bandBottom = bandTop + uBandHeight;
-  float bandCenterY = bandTopBase + (uBandHeight * 0.5);
-
-  vec2 rotationCenter = uRotationType > 0.5
-    ? vec2(0.0, bandCenterY)
-    : vec2(uResolution.x * 0.5, bandCenterY);
-
-  pixelCoord -= rotationCenter;
-  pixelCoord = rotate2d(uRotation) * pixelCoord;
-  pixelCoord += rotationCenter;
-  originalPixelCoord -= rotationCenter;
-  originalPixelCoord = rotate2d(uRotation) * originalPixelCoord;
-  originalPixelCoord += rotationCenter;
-
-  vec2 rt = vec2(0.0, bandTop) - rotationCenter;
-  rt = rotate2d(uRotation) * rt + rotationCenter;
-  vec2 rb = vec2(0.0, bandBottom) - rotationCenter;
-  rb = rotate2d(uRotation) * rb + rotationCenter;
-  bandTop = min(rt.y, rb.y);
-  bandBottom = max(rt.y, rb.y);
-
   float margin = 3.0;
   if (pixelCoord.y < bandTop - margin || pixelCoord.y > bandBottom + margin) discard;
 
-  float wrappedX = mod(originalPixelCoord.x + uScroll * uSpeed, uSequenceWidth);
-  float textureX = (wrappedX + uSequenceWidth) / uTextureWidth;
+  float textureX = (mod(pixelCoord.x + uScroll * uSpeed, uSequenceWidth) + uSequenceWidth) / uTextureWidth;
   float texY = (pixelCoord.y - bandTop) / (bandBottom - bandTop);
   if (textureX < 0.0 || textureX > 1.0 || texY < 0.0 || texY > 1.0) discard;
 
@@ -173,7 +138,7 @@ export default function BgHole() {
       const w = innerWidth;
       const h = innerHeight;
       const n = materials.length || BANDS.length;
-      const bandH = (h / n) * 1.55;
+      const bandH = (h / n) * 0.72;
       renderer.setSize(w, h);
       materials.forEach((m, i) => {
         m.uniforms.uResolution.value.set(w, h);
@@ -213,9 +178,6 @@ export default function BgHole() {
             uScroll: { value: 0 },
             uSpeed: { value: cfg.speed },
             uOffsetY: { value: 0 },
-            uRotation: { value: cfg.rotation },
-            uRotationType: { value: cfg.fromLeft },
-            uCurveAmount: { value: cfg.curve },
           },
           vertexShader: VERT,
           fragmentShader: FRAG,
