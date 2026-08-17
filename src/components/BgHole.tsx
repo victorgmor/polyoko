@@ -43,7 +43,7 @@ varying vec2 vUv;
 void main() {
   vec2 p = vUv - 0.5;
   p.x *= uResolution.x / uResolution.y;
-  p /= (1.0 + 0.75 * dot(p, p));
+  p /= (1.0 + 0.22 * dot(p, p));
   p.x /= uResolution.x / uResolution.y;
   vec2 pixelCoord = (p + 0.5) * uResolution;
 
