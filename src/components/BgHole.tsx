@@ -9,14 +9,14 @@ const CLONES = 3;
 const IMAGES = Array.from({ length: 32 }, (_, i) => `/img/markets/${String(i).padStart(2, "0")}.jpg`);
 
 const BANDS = [
-  { offsetY: -110, speed: 1.0, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
-  { offsetY: -330, speed: 1.3, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 35 },
-  { offsetY: -440, speed: 1.6, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
-  { offsetY: -220, speed: 0.7, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { offsetY: 0, speed: 0.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { offsetY: 110, speed: 1.2, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { offsetY: 220, speed: 0.8, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
-  { offsetY: 330, speed: 1.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { speed: 1.0, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
+  { speed: 1.3, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 35 },
+  { speed: 1.6, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
+  { speed: 0.7, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { speed: 0.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { speed: 1.2, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { speed: 0.8, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { speed: 1.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
 ];
 
 const VERT = `
@@ -92,7 +92,7 @@ void main() {
   if (edge < margin) color.a *= smoothstep(0.0, margin, edge);
   if (color.a < 0.01) discard;
 
-  gl_FragColor = color;
+  gl_FragColor = vec4(color.rgb, color.a * 0.05);
 }
 `;
 
@@ -169,11 +169,19 @@ export default function BgHole() {
     const meshes: THREE.Mesh[] = [];
     const textures: THREE.CanvasTexture[] = [];
 
-    const onResize = () => {
-      renderer.setSize(innerWidth, innerHeight);
-      for (const m of materials) m.uniforms.uResolution.value.set(innerWidth, innerHeight);
+    const layout = () => {
+      const w = innerWidth;
+      const h = innerHeight;
+      const n = materials.length || BANDS.length;
+      const bandH = (h / n) * 1.55;
+      renderer.setSize(w, h);
+      materials.forEach((m, i) => {
+        m.uniforms.uResolution.value.set(w, h);
+        m.uniforms.uBandHeight.value = bandH;
+        m.uniforms.uOffsetY.value = h * ((i + 0.5) / n - 0.5);
+      });
     };
-    addEventListener("resize", onResize);
+    addEventListener("resize", layout);
 
     let scroll = 0;
     const tick = () => {
@@ -201,10 +209,10 @@ export default function BgHole() {
             uTexture: { value: tex },
             uTextureWidth: { value: total },
             uSequenceWidth: { value: seq },
-            uBandHeight: { value: BAND_H },
+            uBandHeight: { value: 0 },
             uScroll: { value: 0 },
             uSpeed: { value: cfg.speed },
-            uOffsetY: { value: cfg.offsetY },
+            uOffsetY: { value: 0 },
             uRotation: { value: cfg.rotation },
             uRotationType: { value: cfg.fromLeft },
             uCurveAmount: { value: cfg.curve },
@@ -222,6 +230,7 @@ export default function BgHole() {
         scene.add(mesh);
         meshes.push(mesh);
       });
+      layout();
 
       if (freeze) tick();
       else renderer.setAnimationLoop(tick);
@@ -230,7 +239,7 @@ export default function BgHole() {
     return () => {
       dead = true;
       renderer.setAnimationLoop(null);
-      removeEventListener("resize", onResize);
+      removeEventListener("resize", layout);
       for (const mesh of meshes) {
         mesh.geometry.dispose();
         scene.remove(mesh);
