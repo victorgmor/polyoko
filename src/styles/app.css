@@ -635,6 +635,15 @@ a:hover {
   text-decoration: none;
 }
 
+.page-container a.launch-btn.is-disabled,
+.page-container a.launch-btn.is-disabled:hover {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.55;
+  background: var(--ink);
+  color: var(--fg);
+}
+
 .page-container a.launch-btn.is-ghost {
   flex: 1 1 0;
   background: transparent;

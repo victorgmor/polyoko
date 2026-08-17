@@ -171,10 +171,18 @@ function PageBody({
             <a
               key={c.label}
               href={c.href}
-              className={`launch-btn${c.ghost ? " is-ghost" : ""}`}
+              className={`launch-btn${c.ghost ? " is-ghost" : ""}${c.disabled ? " is-disabled" : ""}`}
               target={c.href.startsWith("http") ? "_blank" : undefined}
               rel={c.href.startsWith("http") ? "noreferrer" : undefined}
-              onClick={(e) => goHref(c.href, e)}
+              aria-disabled={c.disabled || undefined}
+              tabIndex={c.disabled ? -1 : undefined}
+              onClick={(e) => {
+                if (c.disabled) {
+                  e.preventDefault();
+                  return;
+                }
+                goHref(c.href, e);
+              }}
             >
               {c.icon === "telegram" && (
                 <svg
