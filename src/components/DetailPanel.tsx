@@ -7,7 +7,6 @@ import {
 } from "react";
 import {
   getPage,
-  HOME_MEDIA,
   WISHLIST_JSON,
   type MenuSection,
   type PageContent,
@@ -225,28 +224,6 @@ function PageBody({
   );
 }
 
-function HomeMedia({ show }: { show: boolean }) {
-  return (
-    <div className="page-media" aria-hidden>
-      {HOME_MEDIA.map((m, i) => (
-        <div
-          key={m.src}
-          className={[
-            "media-item",
-            `media-index-${i + 1}`,
-            m.landscape ? "media-landscape" : "",
-            show ? "show-media-item" : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          <img src={m.src} alt="" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function DetailPanel({
   pageId,
   onPageChange,
@@ -256,22 +233,12 @@ export default function DetailPanel({
 }) {
   const page = getPage(pageId) ?? getPage("/")!;
   const isHome = pageId === "/";
-  const [mediaIn, setMediaIn] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const prevH = useRef(0);
   const sizingRef = useRef(false);
   const [panelH, setPanelH] = useState<number | undefined>(undefined);
   const [sizing, setSizing] = useState(false);
-
-  useEffect(() => {
-    if (!isHome) {
-      setMediaIn(false);
-      return;
-    }
-    const t = window.setTimeout(() => setMediaIn(true), 80);
-    return () => clearTimeout(t);
-  }, [isHome]);
 
   // Page change: animate height, then let CSS auto-size (accordions).
   useLayoutEffect(() => {
@@ -299,7 +266,6 @@ export default function DetailPanel({
   return (
     <div className={`page${isHome ? " page-home" : ""}`}>
       <div className="page-container">
-        {isHome && <HomeMedia show={mediaIn} />}
         <div className="page-stack">
           <div className="panel-heading">
             <div className="tab-titles page-header-titles">

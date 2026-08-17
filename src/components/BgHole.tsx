@@ -1,6 +1,152 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
+const BAND_H = 120;
+const IMG_H = 100;
+const GAP = 20;
+const MAX_W = 300;
+const CLONES = 3;
+const IMAGES = Array.from({ length: 32 }, (_, i) => `/img/markets/${String(i).padStart(2, "0")}.jpg`);
+
+const BANDS = [
+  { offsetY: -110, speed: 1.0, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
+  { offsetY: -330, speed: 1.3, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 35 },
+  { offsetY: -440, speed: 1.6, rotation: 7 * Math.PI / 180, fromLeft: 1, curve: 40 },
+  { offsetY: -220, speed: 0.7, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { offsetY: 0, speed: 0.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { offsetY: 110, speed: 1.2, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { offsetY: 220, speed: 0.8, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+  { offsetY: 330, speed: 1.4, rotation: 7 * Math.PI / 180, fromLeft: 0, curve: 40 },
+];
+
+const VERT = `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const FRAG = `
+precision highp float;
+uniform vec2 uResolution;
+uniform sampler2D uTexture;
+uniform float uTextureWidth;
+uniform float uSequenceWidth;
+uniform float uBandHeight;
+uniform float uScroll;
+uniform float uSpeed;
+uniform float uOffsetY;
+uniform float uRotation;
+uniform float uRotationType;
+uniform float uCurveAmount;
+varying vec2 vUv;
+
+mat2 rotate2d(float a) {
+  return mat2(cos(a), -sin(a), sin(a), cos(a));
+}
+
+void main() {
+  vec2 pixelCoord = vUv * uResolution;
+  vec2 originalPixelCoord = pixelCoord;
+
+  float normalizedX = pixelCoord.x / uResolution.x;
+  float curveFactor = 4.0 * (normalizedX - 0.5) * (normalizedX - 0.5);
+  float curveOffset = (0.5 - curveFactor) * uCurveAmount;
+
+  float bandTopBase = (uResolution.y - uBandHeight) * 0.5 + uOffsetY;
+  float bandTop = bandTopBase + curveOffset;
+  float bandBottom = bandTop + uBandHeight;
+  float bandCenterY = bandTopBase + (uBandHeight * 0.5);
+
+  vec2 rotationCenter = uRotationType > 0.5
+    ? vec2(0.0, bandCenterY)
+    : vec2(uResolution.x * 0.5, bandCenterY);
+
+  pixelCoord -= rotationCenter;
+  pixelCoord = rotate2d(uRotation) * pixelCoord;
+  pixelCoord += rotationCenter;
+  originalPixelCoord -= rotationCenter;
+  originalPixelCoord = rotate2d(uRotation) * originalPixelCoord;
+  originalPixelCoord += rotationCenter;
+
+  vec2 rt = vec2(0.0, bandTop) - rotationCenter;
+  rt = rotate2d(uRotation) * rt + rotationCenter;
+  vec2 rb = vec2(0.0, bandBottom) - rotationCenter;
+  rb = rotate2d(uRotation) * rb + rotationCenter;
+  bandTop = min(rt.y, rb.y);
+  bandBottom = max(rt.y, rb.y);
+
+  float margin = 3.0;
+  if (pixelCoord.y < bandTop - margin || pixelCoord.y > bandBottom + margin) discard;
+
+  float wrappedX = mod(originalPixelCoord.x + uScroll * uSpeed, uSequenceWidth);
+  float textureX = (wrappedX + uSequenceWidth) / uTextureWidth;
+  float texY = (pixelCoord.y - bandTop) / (bandBottom - bandTop);
+  if (textureX < 0.0 || textureX > 1.0 || texY < 0.0 || texY > 1.0) discard;
+
+  vec4 color = texture2D(uTexture, vec2(textureX, texY));
+  if (color.a < 0.08) discard;
+
+  float edge = min(pixelCoord.y - bandTop, bandBottom - pixelCoord.y);
+  if (edge < margin) color.a *= smoothstep(0.0, margin, edge);
+  if (color.a < 0.01) discard;
+
+  gl_FragColor = color;
+}
+`;
+
+function loadImg(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+function bandTexture(imgs: HTMLImageElement[]) {
+  const sized = imgs.map((img) => {
+    let h = IMG_H;
+    let w = Math.round(h * (img.naturalWidth / img.naturalHeight));
+    if (w > MAX_W) {
+      w = MAX_W;
+      h = Math.round(w / (img.naturalWidth / img.naturalHeight));
+    }
+    return { img, w, h };
+  });
+  const seq = sized.reduce((n, i) => n + i.w + GAP, 0) - GAP;
+  const canvas = document.createElement("canvas");
+  canvas.width = seq * CLONES;
+  canvas.height = BAND_H;
+  const ctx = canvas.getContext("2d", { alpha: true })!;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let x = 0;
+  for (let c = 0; c < CLONES; c++) {
+    for (const { img, w, h } of sized) {
+      const y = (BAND_H - h) / 2;
+      const r = Math.min(16, w / 2, h / 2);
+      const tile = document.createElement("canvas");
+      tile.width = w;
+      tile.height = h;
+      const t = tile.getContext("2d")!;
+      t.drawImage(img, 0, 0, w, h);
+      t.globalCompositeOperation = "destination-in";
+      t.beginPath();
+      t.roundRect(0, 0, w, h, r);
+      t.fill();
+      ctx.drawImage(tile, x, y);
+      x += w + GAP;
+    }
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.premultiplyAlpha = true;
+  tex.minFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  return { tex, total: canvas.width, seq };
+}
+
 export default function BgHole() {
   const host = useRef<HTMLDivElement>(null);
 
@@ -8,124 +154,89 @@ export default function BgHole() {
     const el = host.current;
     if (!el) return;
     const freeze = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let dead = false;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x2f62ff);
-    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
-    camera.position.set(0, 4, 21);
-    const renderer = new THREE.WebGLRenderer({ antialias: false });
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+    camera.position.z = 1;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setClearColor(0x2f62ff, 1);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.setSize(innerWidth, innerHeight);
     el.appendChild(renderer.domElement);
 
-    const gu = { time: { value: 0 } };
-    const sizes: number[] = [];
-    const shift: number[] = [];
-    const pts: THREE.Vector3[] = [];
-    const pushShift = () => {
-      shift.push(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI * 2,
-        (Math.random() * 0.9 + 0.1) * Math.PI * 0.1,
-        Math.random() * 0.9 + 0.1,
-      );
-    };
-    // ponytail: 40k points, original was 150k
-    for (let i = 0; i < 12000; i++) {
-      sizes.push(Math.random() * 1.5 + 0.5);
-      pushShift();
-      pts.push(new THREE.Vector3().randomDirection().multiplyScalar(Math.random() * 0.5 + 9.5));
-    }
-    for (let i = 0; i < 28000; i++) {
-      const r = 10, R = 40;
-      const rand = Math.pow(Math.random(), 1.5);
-      const radius = Math.sqrt(R * R * rand + (1 - rand) * r * r);
-      pts.push(
-        new THREE.Vector3().setFromCylindricalCoords(
-          radius,
-          Math.random() * 2 * Math.PI,
-          (Math.random() - 0.5) * 2,
-        ),
-      );
-      sizes.push(Math.random() * 1.5 + 0.5);
-      pushShift();
-    }
+    const materials: THREE.ShaderMaterial[] = [];
+    const meshes: THREE.Mesh[] = [];
+    const textures: THREE.CanvasTexture[] = [];
 
-    const g = new THREE.BufferGeometry().setFromPoints(pts);
-    g.setAttribute("sizes", new THREE.Float32BufferAttribute(sizes, 1));
-    g.setAttribute("shift", new THREE.Float32BufferAttribute(shift, 4));
-    const m = new THREE.PointsMaterial({
-      size: 0.2,
-      transparent: true,
-      depthTest: false,
-      blending: THREE.AdditiveBlending,
-      onBeforeCompile: (shader) => {
-        shader.uniforms.time = gu.time;
-        shader.vertexShader = `
-          uniform float time;
-          attribute float sizes;
-          attribute vec4 shift;
-          varying vec3 vColor;
-          #define PI2 6.28318530718
-          ${shader.vertexShader}
-        `
-          .replace(`gl_PointSize = size;`, `gl_PointSize = size * sizes;`)
-          .replace(
-            `#include <color_vertex>`,
-            `#include <color_vertex>
-              float d = length(abs(position) / vec3(40., 10., 40));
-              d = clamp(d, 0., 1.);
-              vColor = mix(vec3(255., 255., 255.), vec3(160., 200., 255.), d) / 255.;
-            `,
-          )
-          .replace(
-            `#include <begin_vertex>`,
-            `#include <begin_vertex>
-              float t = time;
-              float moveT = mod(shift.x + shift.z * t, PI2);
-              float moveS = mod(shift.y + shift.z * t, PI2);
-              transformed += vec3(cos(moveS) * sin(moveT), cos(moveT), sin(moveS) * sin(moveT)) * shift.w;
-            `,
-          );
-        shader.fragmentShader = `
-          varying vec3 vColor;
-          ${shader.fragmentShader}
-        `.replace(
-          `vec4 diffuseColor = vec4( diffuse, opacity );`,
-          `float d = length(gl_PointCoord.xy - 0.5);
-           vec4 diffuseColor = vec4( vColor, smoothstep(0.5, 0.1, d) );`,
-        );
-      },
-    });
-    const p = new THREE.Points(g, m);
-    p.rotation.order = "ZYX";
-    p.rotation.z = 0.2;
-    scene.add(p);
-
-    const clock = new THREE.Clock();
     const onResize = () => {
-      camera.aspect = innerWidth / innerHeight;
-      camera.updateProjectionMatrix();
       renderer.setSize(innerWidth, innerHeight);
+      for (const m of materials) m.uniforms.uResolution.value.set(innerWidth, innerHeight);
     };
     addEventListener("resize", onResize);
 
+    let scroll = 0;
     const tick = () => {
-      if (!freeze) {
-        const t = clock.getElapsedTime() * 0.5;
-        gu.time.value = t * Math.PI;
-        p.rotation.y = t * 0.05;
+      if (!freeze) scroll += 0.7;
+      for (const m of materials) {
+        m.uniforms.uScroll.value = scroll;
+        m.uniforms.uResolution.value.set(innerWidth, innerHeight);
       }
       renderer.render(scene, camera);
     };
-    if (freeze) tick();
-    else renderer.setAnimationLoop(tick);
+
+    (async () => {
+      const loaded = (await Promise.allSettled(IMAGES.map(loadImg)))
+        .filter((r): r is PromiseFulfilledResult<HTMLImageElement> => r.status === "fulfilled")
+        .map((r) => r.value);
+      if (dead || loaded.length < 8) return;
+
+      BANDS.forEach((cfg, i) => {
+        const slice = Array.from({ length: 8 }, (_, j) => loaded[(i * 4 + j) % loaded.length]);
+        const { tex, total, seq } = bandTexture(slice);
+        textures.push(tex);
+        const material = new THREE.ShaderMaterial({
+          uniforms: {
+            uResolution: { value: new THREE.Vector2(innerWidth, innerHeight) },
+            uTexture: { value: tex },
+            uTextureWidth: { value: total },
+            uSequenceWidth: { value: seq },
+            uBandHeight: { value: BAND_H },
+            uScroll: { value: 0 },
+            uSpeed: { value: cfg.speed },
+            uOffsetY: { value: cfg.offsetY },
+            uRotation: { value: cfg.rotation },
+            uRotationType: { value: cfg.fromLeft },
+            uCurveAmount: { value: cfg.curve },
+          },
+          vertexShader: VERT,
+          fragmentShader: FRAG,
+          transparent: true,
+          toneMapped: false,
+          depthTest: false,
+          depthWrite: false,
+        });
+        materials.push(material);
+        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+        mesh.position.z = i * -0.1;
+        scene.add(mesh);
+        meshes.push(mesh);
+      });
+
+      if (freeze) tick();
+      else renderer.setAnimationLoop(tick);
+    })();
 
     return () => {
+      dead = true;
       renderer.setAnimationLoop(null);
       removeEventListener("resize", onResize);
-      g.dispose();
-      m.dispose();
+      for (const mesh of meshes) {
+        mesh.geometry.dispose();
+        scene.remove(mesh);
+      }
+      for (const m of materials) m.dispose();
+      for (const t of textures) t.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     };

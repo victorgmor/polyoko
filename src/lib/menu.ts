@@ -175,16 +175,6 @@ export const MENU_NODES: MenuNode[] = [
   },
 ];
 
-/** Backdrop images behind the home panel (Trousdale-style corners). */
-export const HOME_MEDIA: { src: string; landscape?: boolean }[] = [
-  { src: "/img/home/1.png", landscape: true },
-  { src: "/img/home/2.png", landscape: true },
-  { src: "/img/home/3.png", landscape: true },
-  { src: "/img/home/4.png", landscape: true },
-  { src: "/img/home/5.png", landscape: true },
-  { src: "/img/home/6.png", landscape: true },
-];
-
 export const PAGES: Record<string, PageContent> = {
   "/": {
     title: "Plusmarket",
