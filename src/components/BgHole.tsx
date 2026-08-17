@@ -6,7 +6,8 @@ export default function BgHole() {
 
   useEffect(() => {
     const el = host.current;
-    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!el) return;
+    const freeze = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x2f62ff);
@@ -54,7 +55,7 @@ export default function BgHole() {
     g.setAttribute("sizes", new THREE.Float32BufferAttribute(sizes, 1));
     g.setAttribute("shift", new THREE.Float32BufferAttribute(shift, 4));
     const m = new THREE.PointsMaterial({
-      size: 0.125,
+      size: 0.2,
       transparent: true,
       depthTest: false,
       blending: THREE.AdditiveBlending,
@@ -74,7 +75,7 @@ export default function BgHole() {
             `#include <color_vertex>
               float d = length(abs(position) / vec3(40., 10., 40));
               d = clamp(d, 0., 1.);
-              vColor = mix(vec3(210., 230., 255.), vec3(47., 98., 255.), d) / 255.;
+              vColor = mix(vec3(255., 255., 255.), vec3(160., 200., 255.), d) / 255.;
             `,
           )
           .replace(
@@ -89,17 +90,11 @@ export default function BgHole() {
         shader.fragmentShader = `
           varying vec3 vColor;
           ${shader.fragmentShader}
-        `
-          .replace(
-            `#include <clipping_planes_fragment>`,
-            `#include <clipping_planes_fragment>
-              float d = length(gl_PointCoord.xy - 0.5);
-            `,
-          )
-          .replace(
-            `vec4 diffuseColor = vec4( diffuse, opacity );`,
-            `vec4 diffuseColor = vec4( vColor, smoothstep(0.5, 0.1, d) );`,
-          );
+        `.replace(
+          `vec4 diffuseColor = vec4( diffuse, opacity );`,
+          `float d = length(gl_PointCoord.xy - 0.5);
+           vec4 diffuseColor = vec4( vColor, smoothstep(0.5, 0.1, d) );`,
+        );
       },
     });
     const p = new THREE.Points(g, m);
@@ -115,12 +110,16 @@ export default function BgHole() {
     };
     addEventListener("resize", onResize);
 
-    renderer.setAnimationLoop(() => {
-      const t = clock.getElapsedTime() * 0.5;
-      gu.time.value = t * Math.PI;
-      p.rotation.y = t * 0.05;
+    const tick = () => {
+      if (!freeze) {
+        const t = clock.getElapsedTime() * 0.5;
+        gu.time.value = t * Math.PI;
+        p.rotation.y = t * 0.05;
+      }
       renderer.render(scene, camera);
-    });
+    };
+    if (freeze) tick();
+    else renderer.setAnimationLoop(tick);
 
     return () => {
       renderer.setAnimationLoop(null);
