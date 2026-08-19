@@ -425,7 +425,7 @@ a:hover {
 }
 
 .panel-back::after {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .panel-back:hover {
