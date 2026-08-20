@@ -184,7 +184,7 @@ export const PAGES: Record<string, PageContent> = {
       "The easiest way to trade on Polymarket — automate entries, size positions, and manage risk without living in a heavyweight UI.",
     // ponytail: bot URL placeholder until live
     ctas: [
-      { href: "https://t.me/+Q0aItbvNIGM5MzVh", label: "Join the waitlist" },
+      { href: "https://t.me/+Q0aItbvNIGM5MzVh", label: "Join the waitlist ＋" },
       { href: "/changelog", label: "Changelog", ghost: true },
     ],
   },
