@@ -184,6 +184,11 @@ function PageBody({
                 goHref(c.href, e);
               }}
             >
+              {c.icon === "plus" && (
+                <span className="launch-btn-plus" aria-hidden>
+                  +
+                </span>
+              )}
               {c.icon === "telegram" && (
                 <svg
                   className="launch-btn-icon launch-btn-icon-tg"

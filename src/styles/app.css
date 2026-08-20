@@ -616,6 +616,16 @@ a:hover {
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
+.launch-btn-plus {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  flex-shrink: 0;
+  text-transform: none;
+  transform: translateY(-2px);
+}
+
 .launch-btn-icon {
   width: 14px;
   height: 14px;
