@@ -305,7 +305,7 @@ a:hover {
   position: absolute;
   left: 50%;
   bottom: calc(100% - 76px);
-  transform: translateX(-50%) rotate(7deg);
+  transform: translateX(-50%) rotate(-7deg);
   transform-origin: 50% 78%;
   width: 230px;
   height: auto;
