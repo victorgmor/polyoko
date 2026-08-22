@@ -279,6 +279,12 @@ export default function DetailPanel({
   return (
     <div className={`page${isHome ? " page-home" : ""}`}>
       <div className="page-container">
+        <img
+          className="menu-girl"
+          src="/img/menu-girl.png"
+          alt=""
+          aria-hidden
+        />
         <div className="page-stack">
           <div className="panel-heading">
             <div className="tab-titles page-header-titles">

@@ -204,7 +204,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   overflow: visible;
-  padding: 64px 0 48px;
+  padding: 168px 0 48px;
 }
 
 @media (max-width: 768px) {
@@ -212,7 +212,7 @@ a:hover {
     width: 95vw;
     left: 50%;
     justify-content: center;
-    padding: 56px 0 calc(44px + env(safe-area-inset-bottom, 0px));
+    padding: 132px 0 calc(44px + env(safe-area-inset-bottom, 0px));
   }
 
   .page-stack {
@@ -222,6 +222,10 @@ a:hover {
 
   .main-content {
     max-height: calc(68vh - 52px);
+  }
+
+  .menu-girl {
+    width: 230px;
   }
 }
 
@@ -233,7 +237,7 @@ a:hover {
   line-height: 1.45em;
   letter-spacing: -0.01em;
   pointer-events: all;
-  color: var(--fg);
+  color: var(--ink);
 }
 
 @media (max-width: 768px) {
@@ -243,41 +247,78 @@ a:hover {
   }
 }
 
+.menu-girl {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 92px);
+  transform: translateX(-50%);
+  width: 280px;
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .page-stack {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: linear-gradient(180deg, rgba(16, 18, 28, 0.96), rgba(16, 18, 28, 0.88));
-  border-radius: 15px;
-  overflow: hidden;
+  margin-top: 12px;
+  background: #fff;
+  color: var(--ink);
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow:
+    0 -3px #fff,
+    0 3px #fff,
+    -3px 0 #fff,
+    3px 0 #fff,
+    0 -6px var(--ink),
+    0 6px var(--ink),
+    -6px 0 var(--ink),
+    6px 0 var(--ink),
+    3px -3px var(--ink),
+    -3px -3px var(--ink),
+    3px 3px var(--ink),
+    -3px 3px var(--ink);
+}
+
+.page-stack::before {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: -11px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  box-shadow:
+    -3px 0 var(--ink),
+    0 -3px var(--ink),
+    -3px -3px var(--ink);
+  transform: rotate(45deg);
+  z-index: 2;
 }
 
 .panel-heading {
   position: relative;
-  background: transparent;
+  background: #fff;
   border-radius: 0;
   padding: 14px 22px;
 }
 
-/* 1px border on a flex-centered panel lands on a half-pixel when height is odd → looks 2px */
 .panel-heading::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.14);
+  height: 2px;
+  background: var(--ink);
   pointer-events: none;
-  transform-origin: bottom;
-}
-
-@media (min-resolution: 2dppx) {
-  .panel-heading::after {
-    transform: scaleY(0.5);
-  }
 }
 
 .panel-heading .tab-titles {
@@ -317,7 +358,7 @@ a:hover {
   align-items: center;
   gap: 10px;
   padding: 0 0 10px;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.28);
+  border-bottom: 2px dashed var(--ink);
   user-select: none;
 }
 
@@ -340,6 +381,7 @@ a:hover {
   height: 19px;
   overflow: visible;
   shape-rendering: geometricPrecision;
+  filter: invert(1);
 }
 
 .tab-shape {
@@ -384,7 +426,7 @@ a:hover {
   margin-left: auto;
   text-transform: none;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.5);
+  color: #666;
 }
 
 .panel-back {
@@ -395,7 +437,7 @@ a:hover {
   border: 0;
   padding: 0;
   background: none;
-  color: var(--fg);
+  color: var(--ink);
   cursor: pointer;
   position: relative;
 }
@@ -477,7 +519,7 @@ a:hover {
   width: 100%;
   padding: 10px 0;
   border: 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.28);
+  border-bottom: 2px dashed var(--ink);
   background: none;
   color: inherit;
   cursor: pointer;
@@ -520,7 +562,7 @@ a:hover {
 .fee-compare td {
   padding: 10px 0;
   text-align: left;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.28);
+  border-bottom: 2px dashed var(--ink);
   vertical-align: middle;
 }
 
@@ -571,7 +613,7 @@ a:hover {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.28);
+  border-bottom: 2px dashed var(--ink);
 }
 
 .wishlist-rank li:last-child {
@@ -593,8 +635,8 @@ a:hover {
   padding: 13px 14px 9px;
   text-align: center;
   text-decoration: none;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  border: 3px solid var(--ink);
+  border-radius: 0;
   background: var(--ink);
   color: var(--fg);
   font-size: 13px;
@@ -629,6 +671,7 @@ a:hover {
 .page-container a.launch-btn:hover {
   background: #fff;
   color: var(--ink);
+  border-color: var(--ink);
   text-decoration: none;
 }
 
@@ -643,15 +686,15 @@ a:hover {
 
 .page-container a.launch-btn.is-ghost {
   flex: 1 1 0;
-  background: transparent;
-  color: var(--fg);
-  border-color: rgba(255, 255, 255, 0.7);
+  background: #fff;
+  color: var(--ink);
+  border-color: var(--ink);
   border-style: dashed;
 }
 
 .page-container a.launch-btn.is-ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--fg);
+  background: #eee;
+  color: var(--ink);
   border-style: dashed;
 }
 
