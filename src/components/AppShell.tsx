@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import DetailPanel from "./DetailPanel";
-import BgHole from "./BgHole";
 import { getPage, MENU_NODES } from "@/lib/menu";
 function pathToPageId(pathname: string): string {
   const id = pathname === "/" ? "/" : pathname.replace(/^\//, "");
@@ -30,7 +29,6 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
 
   return (
     <>
-      <BgHole />
       <header className="site-header">
         <nav className="site-nav">
           <button
