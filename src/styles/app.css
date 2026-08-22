@@ -70,7 +70,7 @@ main {
 :root {
   --ink: #0B0C10;
   --fg: #fff;
-  --paper: #5A94FF;
+  --paper: #115ae0;
   --panel: rgba(16, 18, 28, 0.92);
   --cta: #d4d0f7;
   --hub-size: 20px; /* match circle satellite nodes */
@@ -144,7 +144,7 @@ a:hover {
   background-size: 2px 512px, auto, auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  opacity: 1;
+  opacity: 0.24;
 }
 
 @keyframes crt-flicker {
