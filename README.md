@@ -3,8 +3,8 @@
 Run this on your Mac. You do not need the cloud agent.
 
 ```bash
-git clone https://github.com/victorgmor/polynex-web.git
-cd polynex-web
+git clone https://github.com/victorgmor/polynex-web.git polyoko
+cd polyoko
 git checkout cursor/plain-white-bg-a5f8
 npm install
 npm run dev
