@@ -31,7 +31,6 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
     <>
       <div className="crt" aria-hidden>
         <div className="crt-scanlines" />
-        <div className="crt-vignette" />
       </div>
       <header className="site-header">
         <nav className="site-nav">
