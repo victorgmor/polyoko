@@ -70,7 +70,7 @@ main {
 :root {
   --ink: #0B0C10;
   --fg: #fff;
-  --paper: #111DE1;
+  --paper: #5A94FF;
   --panel: rgba(16, 18, 28, 0.92);
   --cta: #d4d0f7;
   --hub-size: 20px; /* match circle satellite nodes */
