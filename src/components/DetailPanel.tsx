@@ -281,7 +281,7 @@ export default function DetailPanel({
       <div className="page-container">
         <img
           className="menu-girl"
-          src="/img/menu-girl.png"
+          src="/img/menu-girl.png?v=2"
           alt=""
           aria-hidden
         />
