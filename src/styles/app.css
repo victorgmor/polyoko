@@ -123,21 +123,28 @@ a:hover {
 .crt-scanlines {
   position: absolute;
   inset: 0;
-  background:
+  background-color: transparent;
+  background-image:
+    url("/img/crt-grunge.png"),
     repeating-linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0.32) 0px,
-      rgba(0, 0, 0, 0.32) 1px,
+      rgba(0, 0, 0, 0.2) 0px,
+      rgba(0, 0, 0, 0.2) 1px,
       transparent 1px,
       transparent 2px
     ),
     repeating-linear-gradient(
       90deg,
-      rgba(255, 40, 80, 0.08) 0px,
-      rgba(40, 255, 90, 0.05) 1px,
-      rgba(50, 90, 255, 0.08) 2px
+      rgba(0, 0, 0, 0.1) 0px,
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 3px
     );
-  opacity: 0.85;
+  background-repeat: repeat;
+  background-size: 2px 512px, auto, auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  opacity: 1;
 }
 
 @keyframes crt-flicker {
@@ -305,8 +312,7 @@ a:hover {
   position: absolute;
   left: 50%;
   bottom: calc(100% - 76px);
-  transform: translateX(-50%) rotate(-7deg);
-  transform-origin: 50% 78%;
+  transform: translateX(-50%);
   width: 230px;
   height: auto;
   z-index: 0;
