@@ -2,8 +2,9 @@
 import AppShell from "../components/AppShell";
 import "../styles/app.css";
 
-const title = "Plusmarket";
-const description = "Plusmarket trading bot on Polymarket.";
+const title = "Polyoko";
+const description =
+  "I'm not another silent bot. I'm the girl who runs your Polymarket.";
 const og = new URL("/og.png", Astro.site);
 ---
 <!doctype html>
@@ -11,10 +12,9 @@ const og = new URL("/og.png", Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preload" href="/fonts/OverpassMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/OverpassMono-Bold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/videotype/videotype.otf" as="font" type="font/otf" crossorigin />
+    <link rel="icon" href="/favicon.svg?v=layer7b" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg?v=layer7b" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />

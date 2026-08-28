@@ -1,11 +1,10 @@
-# Plusmarket site (local)
+# Polyoko site (local)
 
 Run this on your Mac. You do not need the cloud agent.
 
 ```bash
-git clone https://github.com/victorgmor/polynex-web.git polyoko
+git clone https://github.com/victorgmor/polyoko.git
 cd polyoko
-git checkout cursor/plain-white-bg-a5f8
 npm install
 npm run dev
 ```

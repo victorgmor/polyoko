@@ -1,5 +1,5 @@
 {
-  "name": "plusmarket",
+  "name": "polyoko",
   "private": true,
   "scripts": {
     "dev": "astro dev",
