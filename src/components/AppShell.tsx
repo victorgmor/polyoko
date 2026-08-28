@@ -161,7 +161,7 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
           Polymarket
         </a>
         <span className="hud-chip" aria-hidden>
-          CREDIT 00
+          00
         </span>
       </div>
       <DetailPanel pageId={pageId} onPageChange={go} />
