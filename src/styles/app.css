@@ -363,14 +363,12 @@ a:hover {
 
 @media (max-width: 768px) {
   .page {
-    left: 10px;
-    right: 10px;
-    width: auto;
-    transform: none;
-    justify-content: flex-start;
-    align-items: stretch;
-    padding: calc(192px + env(safe-area-inset-top, 0px)) 0
-      calc(52px + env(safe-area-inset-bottom, 0px));
+    width: 260px;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+    padding: calc(168px + env(safe-area-inset-top, 0px)) 0
+      calc(48px + env(safe-area-inset-bottom, 0px));
   }
 
   .page-stack {
@@ -395,20 +393,16 @@ a:hover {
 
 @media (max-width: 768px) {
   .page-container {
-    width: 100%;
+    width: 260px;
     font-size: 14px;
   }
 
   .panel-heading {
-    padding: 12px 16px;
+    padding: 10px 14px;
   }
 
   .main-content-inner {
-    padding: 12px 16px 16px;
-  }
-
-  .page-container a.launch-btn {
-    padding: 12px 16px;
+    padding: 10px 14px 12px;
   }
 }
 
@@ -428,9 +422,9 @@ a:hover {
 
 @media (max-width: 768px) {
   .menu-girl {
-    width: 168px;
-    bottom: calc(100% - 58px);
-    transform: translateX(-50%) scale(1.18);
+    width: 142px;
+    bottom: calc(100% - 50px);
+    transform: translateX(-50%) scale(1.12);
   }
 }
 
