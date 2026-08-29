@@ -72,7 +72,7 @@ export const MENU_NODES: MenuNode[] = [
           ["Fav food", "Dango"],
           ["Fav animal", "Cat. I am not a cat."],
           ["Hobby", "Checking if you texted"],
-          ["Talent", "I remember what you forgot"],
+          ["Talent", "Reading the book"],
           ["Weakness", "When you don't come back"],
           ["Crush", "~Classified~"],
           ["Best friend", "My coin pile"],

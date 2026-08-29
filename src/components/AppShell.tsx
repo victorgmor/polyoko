@@ -154,11 +154,13 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
           target="_blank"
           rel="noreferrer"
         >
-          Powered by
-          <span className="powered-by-logo-wrap" aria-hidden>
-            <span className="powered-by-logo" />
+          <span className="powered-by-kicker">Powered by</span>
+          <span className="powered-by-brand">
+            <span className="powered-by-logo-wrap" aria-hidden>
+              <span className="powered-by-logo" />
+            </span>
+            Polymarket
           </span>
-          Polymarket
         </a>
         <span className="hud-chip" aria-hidden>
           00
