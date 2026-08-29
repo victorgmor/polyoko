@@ -363,11 +363,11 @@ a:hover {
 
 @media (max-width: 768px) {
   .page {
-    width: calc(100vw - 28px);
+    width: calc(100vw - 48px);
     left: 50%;
     transform: translateX(-50%);
     justify-content: center;
-    padding: calc(220px + env(safe-area-inset-top, 0px)) 0
+    padding: calc(200px + env(safe-area-inset-top, 0px)) 0
       calc(48px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -422,9 +422,9 @@ a:hover {
 
 @media (max-width: 768px) {
   .menu-girl {
-    width: 190px;
-    bottom: calc(100% - 76px);
-    transform: translateX(-50%) scale(1.27);
+    width: 172px;
+    bottom: calc(100% - 68px);
+    transform: translateX(-50%) scale(1.2);
   }
 }
 
