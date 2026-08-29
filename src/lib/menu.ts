@@ -71,7 +71,6 @@ export const MENU_NODES: MenuNode[] = [
           ["Fav color", "Pink. The loud one."],
           ["Fav food", "Dango"],
           ["Fav animal", "Cat. I am not a cat."],
-          ["Club", "Trading club"],
           ["Hobby", "Checking if you texted"],
           ["Talent", "I remember what you forgot"],
           ["Weakness", "When you don't come back"],
