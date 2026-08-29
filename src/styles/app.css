@@ -363,7 +363,7 @@ a:hover {
 
 @media (max-width: 768px) {
   .page {
-    width: 260px;
+    width: calc(100vw - 28px);
     left: 50%;
     transform: translateX(-50%);
     justify-content: center;
@@ -393,7 +393,7 @@ a:hover {
 
 @media (max-width: 768px) {
   .page-container {
-    width: 260px;
+    width: 100%;
     font-size: 14px;
   }
 
@@ -422,9 +422,9 @@ a:hover {
 
 @media (max-width: 768px) {
   .menu-girl {
-    width: 142px;
-    bottom: calc(100% - 50px);
-    transform: translateX(-50%) scale(1.12);
+    width: 160px;
+    bottom: calc(100% - 54px);
+    transform: translateX(-50%) scale(1.14);
   }
 }
 
