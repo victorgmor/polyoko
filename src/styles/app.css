@@ -380,8 +380,8 @@ a:hover {
     left: 50%;
     transform: translateX(-50%);
     justify-content: center;
-    padding: calc(210px + env(safe-area-inset-top, 0px)) 0
-      calc(48px + env(safe-area-inset-bottom, 0px));
+    padding: calc((100vw - 48px) * 0.54 + 50px + env(safe-area-inset-top, 0px))
+      0 calc(48px + env(safe-area-inset-bottom, 0px));
   }
 
   .page-stack {
@@ -396,6 +396,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   position: relative;
+  container-type: inline-size;
   font-family: var(--font);
   font-size: 14px;
   line-height: 1.45em;
@@ -423,22 +424,15 @@ a:hover {
   position: absolute;
   left: 50%;
   bottom: calc(100% - 76px);
+  bottom: calc(100% - 76 / 420 * 100cqi);
   transform: translateX(-50%) scale(1.27);
   transform-origin: center bottom;
-  width: 230px;
+  width: calc(230 / 420 * 100%);
   height: auto;
   z-index: 0;
   pointer-events: none;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-}
-
-@media (max-width: 768px) {
-  .menu-girl {
-    width: 184px;
-    bottom: calc(100% - 72px);
-    transform: translateX(-50%) scale(1.23);
-  }
 }
 
 .menu-girl-lid {
