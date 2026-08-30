@@ -380,7 +380,7 @@ a:hover {
     left: 50%;
     transform: translateX(-50%);
     justify-content: center;
-    padding: calc(200px + env(safe-area-inset-top, 0px)) 0
+    padding: calc(210px + env(safe-area-inset-top, 0px)) 0
       calc(48px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -435,9 +435,9 @@ a:hover {
 
 @media (max-width: 768px) {
   .menu-girl {
-    width: 172px;
-    bottom: calc(100% - 68px);
-    transform: translateX(-50%) scale(1.2);
+    width: 184px;
+    bottom: calc(100% - 72px);
+    transform: translateX(-50%) scale(1.23);
   }
 }
 
