@@ -13,6 +13,7 @@ import {
   type MenuSection,
   type PageContent,
 } from "@/lib/menu";
+import PlayDesk from "./PlayDesk";
 import { onSfxMove, playSfx } from "@/lib/sfx";
 
 function MenuGirl() {
@@ -331,17 +332,35 @@ function TypedItems({ items, enabled }: { items: string[]; enabled: boolean }) {
   );
 }
 
-function FactsTable({ facts }: { facts: [string, string][] }) {
+function FactsTable({ facts }: { facts: [string, string, string?][] }) {
   return (
     <table className="cv-facts">
       <tbody>
-        {facts.map(([label, value]) => {
+        {facts.map(([label, value, icon]) => {
           const struck = /^~(.*)~$/.exec(value);
+          const shown = struck ? struck[1] : value;
+          const parts = icon ? shown.split("{icon}") : [shown];
           return (
             <tr key={label}>
               <th scope="row">{label}</th>
               <td>
-                {struck ? <span className="is-struck">{struck[1]}</span> : value}
+                {struck ? (
+                  <span className="is-struck">{shown}</span>
+                ) : (
+                  parts.map((part, i) => (
+                    <span key={i}>
+                      {part}
+                      {icon && i < parts.length - 1 ? (
+                        <img
+                          className="cv-fact-icon"
+                          src={icon}
+                          alt=""
+                          aria-hidden
+                        />
+                      ) : null}
+                    </span>
+                  ))
+                )}
               </td>
             </tr>
           );
@@ -589,6 +608,7 @@ function PageBody({
           }}
         />
       ) : null}
+      {ready && page.uri === "play" && <PlayDesk />}
       {ready && page.uri === "wishlist" && <WishlistRank />}
       {ready &&
         sections.map((s, i) => (
@@ -665,6 +685,13 @@ export default function DetailPanel({
 
   // Page change: animate height, then let CSS auto-size (accordions).
   useLayoutEffect(() => {
+    if (page.uri === "play") {
+      prevH.current = 0;
+      setPanelH(undefined);
+      setSizing(false);
+      return;
+    }
+
     const shell = shellRef.current;
     const inner = innerRef.current;
     if (!shell || !inner) return;
@@ -696,10 +723,10 @@ export default function DetailPanel({
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setPanelH(next));
     });
-  }, [pageId, dialogReady]);
+  }, [pageId, dialogReady, page.uri]);
 
   return (
-    <div className={`page${isHome ? " page-home" : ""}`}>
+    <div className={`page${isHome ? " page-home" : ""}${page.uri === "play" ? " page-play" : ""}`}>
       <div className="page-container">
         <MenuGirl />
         <div className="page-stack">
@@ -708,7 +735,7 @@ export default function DetailPanel({
               <span className="tab-title">
                 {isHome ? "Polyoko" : page.title}
               </span>
-              {isHome ? (
+              {isHome || page.uri === "play" ? (
                 <span className="tab-title panel-version panel-online">
                   <svg
                     className="panel-online-icon"

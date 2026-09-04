@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DetailPanel from "./DetailPanel";
 import { getPage, MENU_NODES } from "@/lib/menu";
-import { loadSfxMuted, onSfxMove, playSfx, setSfxMuted, unlockSfx } from "@/lib/sfx";
+import { loadSfxMuted, onSfxMove, playSfx, setSfxMuted, unlockSfx, warmupSfx } from "@/lib/sfx";
 
 function pathToPageId(pathname: string): string {
   const id = pathname === "/" ? "/" : pathname.replace(/^\//, "");
@@ -14,12 +14,13 @@ function pageIdToPath(id: string): string {
 
 export default function AppShell({ pathname: initialPath }: { pathname: string }) {
   const [pathname, setPathname] = useState(initialPath);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [booted, setBooted] = useState(false);
   const pageId = pathToPageId(pathname);
 
   useEffect(() => {
     setMuted(loadSfxMuted());
+    warmupSfx();
   }, []);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
   }
 
   return (
-    <>
+    <div className={pageId === "play" ? "app-shell is-play" : "app-shell"}>
       <header className="site-header">
         <nav className="site-nav">
           <button
@@ -167,6 +168,6 @@ export default function AppShell({ pathname: initialPath }: { pathname: string }
         </span>
       </div>
       <DetailPanel pageId={pageId} onPageChange={go} />
-    </>
+    </div>
   );
 }

@@ -4,7 +4,7 @@ export type MenuSection = {
   body?: string;
   items?: string[];
   /** 2-col CV / fact sheet: [label, value]. Wrap a value in ~like this~ to strike it. */
-  facts?: [string, string][];
+  facts?: [string, string, string?][];
   /** 3-col comparison: [label, ours, theirs] */
   compare?: { head: [string, string, string]; rows: [string, string, string][] };
 };
@@ -45,6 +45,8 @@ export type PageContent = {
   ctas?: CtaChoice[];
 };
 
+const WAITLIST_HREF = "https://t.me/+Q0aItbvNIGM5MzVh";
+
 export const MENU_NODES: MenuNode[] = [
   {
     id: "wishlist",
@@ -52,6 +54,14 @@ export const MENU_NODES: MenuNode[] = [
     hideNav: true,
     shape: "circle",
     body: "Want me to learn something? Tell me in the chat with /vote.\n\nI keep score of what you asked for.",
+  },
+  {
+    id: "play",
+    title: "Desk",
+    navTitle: "Play",
+    hideNav: true,
+    shape: "circle",
+    body: "",
   },
   {
     id: "docs",
@@ -70,7 +80,7 @@ export const MENU_NODES: MenuNode[] = [
           ["Height", "158 cm"],
           ["Fav color", "Pink. The loud one."],
           ["Fav food", "Dango"],
-          ["Fav animal", "Cat. I am not a cat."],
+          ["Fav animal", "Cat{icon}", "/img/cat-face.png"],
           ["Hobby", "Checking if you texted"],
           ["Talent", "Reading the book"],
           ["Weakness", "When you don't come back"],
@@ -87,9 +97,9 @@ export const MENU_NODES: MenuNode[] = [
     navTitle: "Trade",
     hideNav: true,
     shape: "circle",
-    body: "I'm already in the chat. Come in.",
-    href: "https://t.me/+Q0aItbvNIGM5MzVh",
-    hrefLabel: "Open Telegram  →",
+    body: "I'm not taking visitors yet. Leave your name. I'll open the door.",
+    href: WAITLIST_HREF,
+    hrefLabel: "Join the waitlist  →",
   },
   {
     id: "x",
@@ -101,77 +111,26 @@ export const MENU_NODES: MenuNode[] = [
   },
 ];
 
+const PUT_ME_ON_THE_LIST: CtaChoice = {
+  label: "Put me on the list.",
+  icon: "plus",
+  href: WAITLIST_HREF,
+};
+
 export const PAGES: Record<string, PageContent> = {
   "/": {
     title: "Polyoko",
     uri: "/",
     description:
       "I'm not another silent bot. I'm the girl who runs your Polymarket.",
-    // ponytail: bot URL placeholder until live
     ctas: [
       {
         label: "What can you do?",
         icon: "plus",
         say: "What can you do?",
         reply:
-          "I run the book. I place the trades. If you go quiet, I come looking.",
-        then: [
-          {
-            label: "How much?",
-            ghost: true,
-            say: "How much?",
-            reply: "A little when you trade. No rent. That's it.",
-            then: [
-              {
-                label: "Alright. Show me.",
-                icon: "plus",
-                say: "Alright. Show me.",
-                reply: "Come find me. I'm in the chat.",
-                then: [
-                  {
-                    label: "Let's go.",
-                    icon: "plus",
-                    href: "https://t.me/+Q0aItbvNIGM5MzVh",
-                  },
-                ],
-              },
-              {
-                label: "Not yet.",
-                ghost: true,
-                say: "Not yet.",
-                reply: "I'll wait. Don't disappear.",
-                then: [
-                  {
-                    label: "Alright. Show me.",
-                    icon: "plus",
-                    say: "Alright. Show me.",
-                    reply: "Come find me. I'm in the chat.",
-                    then: [
-                      {
-                        label: "Let's go.",
-                        icon: "plus",
-                        href: "https://t.me/+Q0aItbvNIGM5MzVh",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            label: "Alright. Show me.",
-            icon: "plus",
-            say: "Alright. Show me.",
-            reply: "Come find me. I'm in the chat.",
-            then: [
-              {
-                label: "Let's go.",
-                icon: "plus",
-                href: "https://t.me/+Q0aItbvNIGM5MzVh",
-              },
-            ],
-          },
-        ],
+          "I'll run the book. I'll place the trades. Not today. I'm still getting my desk how I like it.",
+        then: [PUT_ME_ON_THE_LIST],
       },
     ],
   },
