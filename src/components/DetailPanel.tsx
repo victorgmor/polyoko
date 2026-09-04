@@ -685,13 +685,6 @@ export default function DetailPanel({
 
   // Page change: animate height, then let CSS auto-size (accordions).
   useLayoutEffect(() => {
-    if (page.uri === "play") {
-      prevH.current = 0;
-      setPanelH(undefined);
-      setSizing(false);
-      return;
-    }
-
     const shell = shellRef.current;
     const inner = innerRef.current;
     if (!shell || !inner) return;
@@ -723,7 +716,7 @@ export default function DetailPanel({
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setPanelH(next));
     });
-  }, [pageId, dialogReady, page.uri]);
+  }, [pageId, dialogReady]);
 
   return (
     <div className={`page${isHome ? " page-home" : ""}${page.uri === "play" ? " page-play" : ""}`}>

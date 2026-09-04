@@ -9,7 +9,7 @@ const SRC: Record<SfxName, string> = {
 const MUTE_KEY = "polyoko-sfx-muted";
 const NAMES = Object.keys(SRC) as SfxName[];
 
-let muted = true;
+let muted = false;
 let ctx: AudioContext | null = null;
 const buffers: Partial<Record<SfxName, AudioBuffer>> = {};
 const raw: Partial<Record<SfxName, ArrayBuffer>> = {};
@@ -17,9 +17,9 @@ let decode: Promise<void> | null = null;
 
 export function loadSfxMuted(): boolean {
   try {
-    muted = localStorage.getItem(MUTE_KEY) !== "0";
+    muted = localStorage.getItem(MUTE_KEY) === "1";
   } catch {
-    muted = true;
+    muted = false;
   }
   return muted;
 }

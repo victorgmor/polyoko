@@ -116,83 +116,81 @@ export default function PlayDesk() {
         <p>{line}</p>
       </div>
 
-      <div className="play-body">
-        {tab === "desk" && (
-          <>
-            <div className="play-meters">
-              <Meter label="Mood" value={state.mood} />
-              <Meter label="Desk" value={5 - state.hunger} />
-              <Meter label="Book" value={Math.max(1, 5 - state.hunger)} />
-            </div>
-            <div className="play-stats">
-              <span>Credits {String(state.credits).padStart(2, "0")}</span>
-              <span>Holds {state.positions.length}</span>
-            </div>
-            <div className="launch-btns">
-              <Btn onClick={onCheckIn}>Check in</Btn>
-              <Btn ghost onClick={() => goTab("book", false)}>
-                Open the book
-              </Btn>
-            </div>
-          </>
-        )}
-
-        {tab === "book" && (
-          <ul className="play-markets">
-            {PLAY_MARKETS.map((m) => (
-              <li key={m.id}>
-                <p className="play-market-title">{m.title}</p>
-                <p className="play-market-odds">
-                  <span>Yes {m.yes}c</span>
-                  <span>No {m.no}c</span>
-                </p>
-                <div className="launch-btns">
-                  <Btn
-                    disabled={state.credits < tradeCost(m.yes)}
-                    onClick={() => onTrade(m, "YES")}
-                  >
-                    Buy yes
-                  </Btn>
-                  <Btn
-                    ghost
-                    disabled={state.credits < tradeCost(m.no)}
-                    onClick={() => onTrade(m, "NO")}
-                  >
-                    Buy no
-                  </Btn>
-                </div>
-                <p className="play-market-note">{SHARE_SIZE} shares</p>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {tab === "bag" && (
-          <div className="play-bag">
-            <p className="play-stats">
-              <span>Credits {String(state.credits).padStart(2, "0")}</span>
-            </p>
-            {state.positions.length === 0 ? (
-              <p className="play-empty">Nothing yet. Come use me.</p>
-            ) : (
-              <ul className="play-holds">
-                {state.positions.map((p) => (
-                  <li key={`${p.id}-${p.side}`}>
-                    <span>
-                      {p.side} {p.market}
-                    </span>
-                    <span>
-                      {p.shares} @ {p.avg}c
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+      {tab === "desk" && (
+        <>
+          <div className="play-meters">
+            <Meter label="Mood" value={state.mood} />
+            <Meter label="Desk" value={5 - state.hunger} />
+            <Meter label="Book" value={Math.max(1, 5 - state.hunger)} />
           </div>
-        )}
-      </div>
+          <div className="play-stats">
+            <span>Credits {String(state.credits).padStart(2, "0")}</span>
+            <span>Holds {state.positions.length}</span>
+          </div>
+          <div className="launch-btns">
+            <Btn onClick={onCheckIn}>Check in</Btn>
+            <Btn ghost onClick={() => goTab("book", false)}>
+              Open the book
+            </Btn>
+          </div>
+        </>
+      )}
 
-      <nav className="play-dock" aria-label="Desk tabs" role="tablist">
+      {tab === "book" && (
+        <ul className="play-markets">
+          {PLAY_MARKETS.map((m) => (
+            <li key={m.id}>
+              <p className="play-market-title">{m.title}</p>
+              <p className="play-market-odds">
+                <span>Yes {m.yes}c</span>
+                <span>No {m.no}c</span>
+              </p>
+              <div className="launch-btns">
+                <Btn
+                  disabled={state.credits < tradeCost(m.yes)}
+                  onClick={() => onTrade(m, "YES")}
+                >
+                  Buy yes
+                </Btn>
+                <Btn
+                  ghost
+                  disabled={state.credits < tradeCost(m.no)}
+                  onClick={() => onTrade(m, "NO")}
+                >
+                  Buy no
+                </Btn>
+              </div>
+              <p className="play-market-note">{SHARE_SIZE} shares</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {tab === "bag" && (
+        <div className="play-bag">
+          <p className="play-stats">
+            <span>Credits {String(state.credits).padStart(2, "0")}</span>
+          </p>
+          {state.positions.length === 0 ? (
+            <p className="play-empty">Nothing yet. Come use me.</p>
+          ) : (
+            <ul className="play-holds">
+              {state.positions.map((p) => (
+                <li key={`${p.id}-${p.side}`}>
+                  <span>
+                    {p.side} {p.market}
+                  </span>
+                  <span>
+                    {p.shares} @ {p.avg}c
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <nav className="play-dock" aria-label="Desk">
         {(
           [
             ["desk", "Desk"],
@@ -203,8 +201,6 @@ export default function PlayDesk() {
           <button
             key={id}
             type="button"
-            role="tab"
-            aria-selected={tab === id}
             className={tab === id ? "is-active" : undefined}
             onPointerEnter={onSfxMove}
             onClick={() => goTab(id)}
