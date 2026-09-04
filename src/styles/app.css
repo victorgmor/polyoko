@@ -443,6 +443,13 @@ a:hover {
   opacity: 1;
 }
 
+.menu-girl-low {
+  z-index: 2;
+  width: calc(248 / 420 * 100%);
+  bottom: calc(100% - 34 / 420 * 100cqi);
+  transform: translateX(-50%) scale(0.8);
+}
+
 .page-stack {
   position: relative;
   z-index: 1;

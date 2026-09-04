@@ -33,6 +33,7 @@ export const PLAY_MARKETS: PlayMarket[] = [
 ];
 
 export const PLAY_KEY = "polyoko-play-v1";
+export const PLAY_EVENT = "polyoko-play";
 export const SHARE_SIZE = 5;
 
 const EMPTY: PlayState = {
@@ -73,6 +74,13 @@ export function savePlay(state: PlayState) {
   } catch {
     /* ignore */
   }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(PLAY_EVENT));
+  }
+}
+
+export function isLowEnergy(state: PlayState) {
+  return state.mood <= 1 || state.hunger >= 4;
 }
 
 export function decay(state: PlayState): PlayState {
@@ -107,6 +115,20 @@ export function checkIn(state: PlayState): { state: PlayState; line: string } {
     lastSeen: Date.now(),
   };
   return { state: next, line: "Good. I like when you show up. Stay a minute." };
+}
+
+export function stepOut(state: PlayState): { state: PlayState; line: string } {
+  const next: PlayState = {
+    ...state,
+    mood: clamp(state.mood - 3),
+    hunger: clamp(state.hunger + 3),
+  };
+  return {
+    state: next,
+    line: isLowEnergy(next)
+      ? "Fine. I'll put my head down."
+      : "You're going? I was just getting started.",
+  };
 }
 
 export function placeTrade(

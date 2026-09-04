@@ -7,6 +7,7 @@ import {
   loadPlay,
   placeTrade,
   savePlay,
+  stepOut,
   tradeCost,
   type PlayMarket,
   type PlaySide,
@@ -80,6 +81,12 @@ export default function PlayDesk() {
     commit(next, say);
   }
 
+  function onStepOut() {
+    if (!state) return;
+    const { state: next, line: say } = stepOut(state);
+    commit(next, say);
+  }
+
   function onTrade(market: PlayMarket, side: PlaySide) {
     if (!state) return;
     const { state: next, line: say } = placeTrade(state, market, side);
@@ -129,8 +136,8 @@ export default function PlayDesk() {
           </div>
           <div className="launch-btns">
             <Btn onClick={onCheckIn}>Check in</Btn>
-            <Btn ghost onClick={() => goTab("book", false)}>
-              Open the book
+            <Btn ghost onClick={onStepOut}>
+              Step out
             </Btn>
           </div>
         </>

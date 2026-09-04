@@ -14,12 +14,22 @@ import {
   type PageContent,
 } from "@/lib/menu";
 import PlayDesk from "./PlayDesk";
+import { PLAY_EVENT, isLowEnergy, loadPlay } from "@/lib/play";
 import { onSfxMove, playSfx } from "@/lib/sfx";
 
 function MenuGirl() {
   const [blink, setBlink] = useState(false);
+  const [low, setLow] = useState(false);
 
   useEffect(() => {
+    const sync = () => setLow(isLowEnergy(loadPlay()));
+    sync();
+    window.addEventListener(PLAY_EVENT, sync);
+    return () => window.removeEventListener(PLAY_EVENT, sync);
+  }, []);
+
+  useEffect(() => {
+    if (low) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let cancelled = false;
     const timers: number[] = [];
@@ -58,7 +68,18 @@ function MenuGirl() {
       cancelled = true;
       timers.forEach((id) => clearTimeout(id));
     };
-  }, []);
+  }, [low]);
+
+  if (low) {
+    return (
+      <img
+        className="menu-girl menu-girl-low"
+        src="/img/menu-girl-low.png"
+        alt=""
+        aria-hidden
+      />
+    );
+  }
 
   return (
     <>
