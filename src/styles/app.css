@@ -408,10 +408,10 @@ a:hover {
 }
 
 .page-play {
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
   width: auto;
   transform: none;
   padding: 0;
@@ -474,10 +474,10 @@ a:hover {
 @media (max-width: 768px) {
   .page-play {
     width: auto;
-    left: 10px;
-    right: 10px;
-    top: max(10px, env(safe-area-inset-top, 0px));
-    bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    left: 28px;
+    right: 28px;
+    top: max(28px, env(safe-area-inset-top, 0px));
+    bottom: max(28px, env(safe-area-inset-bottom, 0px));
     transform: none;
     padding: 0;
   }
@@ -514,11 +514,11 @@ a:hover {
   }
 
   .play-desk .dialog-type.is-speech {
-    margin: 12px 14px 10px;
+    margin: 18px 26px 14px;
   }
 
   .play-body {
-    padding: 0 14px 12px;
+    padding: 0 26px 18px;
   }
 }
 
@@ -1185,13 +1185,13 @@ a:hover {
 
 .play-desk .dialog-type.is-speech {
   flex-shrink: 0;
-  margin: 16px 25px 12px;
+  margin: 22px 36px 16px;
 }
 
 .play-body {
   flex: 1;
   min-height: 0;
-  padding: 0 25px 16px;
+  padding: 0 36px 22px;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
